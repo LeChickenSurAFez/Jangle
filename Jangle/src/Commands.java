@@ -12,8 +12,10 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 
 import music.PlayerManager;
+import music.TrackScheduler;
 import net.dv8tion.jda.api.audio.hooks.ConnectionStatus;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Message.Attachment;
@@ -859,19 +861,11 @@ public class Commands {
 	}
 
 	public void Play(String command) {
-		if (command.substring(0, 4).equals("play")) {
-			AudioPlayerManager playerManager = new DefaultAudioPlayerManager();
-			AudioSourceManagers.registerRemoteSources(playerManager);
-			AudioPlayer player_test = playerManager.createPlayer();
-			TrackScheduler trackScheduler = new TrackScheduler(player_test);
-			player_test.addListener(trackScheduler);
-			
-			
+		if (command.length() >= 4 && command.substring(0, 4).equals("play")) {
 			String[] split_into_two = content.split(" ");
 			String URL = split_into_two[1];
 			//channel.sendMessage("Playing a test song").complete();
 			if (user_vc != null) {
-				channel.sendMessage("Joining " + "**" + user_vc.getName() + "**" + ".").complete();
 				audioManager.openAudioConnection(user_vc);
 				manager.loadAndPlay(jangle_channel, URL);
 				manager.getGuildMusicManager(event.getGuild()).player.setVolume(10);
@@ -889,7 +883,7 @@ public class Commands {
 	}
 
 	public void Volume(String command) {
-		if (command.substring(0, 6).equals("volume")){
+		if (command.length() >= 6 && command.substring(0, 6).equals("volume")){
 			String[] split_into_volume = command.split(" ");
 			manager.getGuildMusicManager(event.getGuild()).player.setVolume(Integer.parseInt(split_into_volume[1]));
 			channel.sendMessage("Changing volume to: " + split_into_volume[1] + "%").complete();

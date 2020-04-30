@@ -25,5 +25,5 @@ public class myEventListener extends ListenerAdapter {
 		Commands command = new Commands(message, content, channel, author, event);
 		command.WhenInputReceived();
 	}
-
+	
 }
