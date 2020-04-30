@@ -1,4 +1,9 @@
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -7,6 +12,7 @@ import org.jsoup.nodes.Document;
 
 import net.dv8tion.jda.api.audio.hooks.ConnectionStatus;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
@@ -38,7 +44,12 @@ public class Commands {
 		author = aut;
 		event = even;
 		prefix = ">";
-		command = content.substring(1, content.length()).toLowerCase();
+		if (content.length() > 0) {
+			command = content.substring(1, content.length()).toLowerCase();
+		}
+		else {
+			command = "";
+		}
 		flipData = new WriteFile("flipTrack.txt", true);
 		flip_name = "flipTrack.txt";
 		flipFile = new ReadFile(flip_name);
@@ -61,8 +72,8 @@ public class Commands {
 	}
 
 	public void WhenInputReceived() {
+		Textlog();
 		if (content.length() > 0) {
-			Textlog();
 			DadJoke();
 			Beemovie();
 			Obama();
@@ -589,14 +600,76 @@ public class Commands {
 	}
 
 	public void Textlog() {
+		//Textlog channel creation
 		TextChannel textlog = event.getGuild().getTextChannelById("531953276816719874");
-		String textAuthor = author.toString();
-		String channelType = channel.toString();
-		String timeString = java.time.LocalDateTime.now().toString();
-
-		textlog.sendMessage("```\n" + "\"" + content + "\"" + "\nAuthor: " + author + "\n" + "Channel: "
-				+ event.getChannel() + "\nTime: " + java.time.LocalDateTime.now() + "```").complete();
-		System.out.println("Message sent to textlog @" + java.time.LocalDateTime.now());
+		/*What's going on here is that I've created an arrayList of the attachments
+		 * found within a given message. What this will allow me to do is go
+		 * through each attachment and handle it separately*/
+		List<Attachment> image = message.getAttachments();
+		//Creating the attachment, which will get re-assigned for each index
+		Attachment image_file;
+		//determining whether or not there is anything in the arrayList
+		boolean contains_image = false;
+		//Initialize file_name
+		String file_name = "";
+		//Initialize the file we'll be working with
+		File temp_image = null;
+		//If there are attachments, proceed
+		if (image.size() > 0) {
+			//It does contain an image
+			contains_image = true;
+			//This will loop through each index of the arrayList and handle each
+			//attachment separately.
+			for (int x = 0; x < image.size(); ++x) {
+				//Assign the image file to index 'x'
+				image_file = image.get(x);
+				//Assign file name
+				file_name = image_file.getFileName();
+				//Create the temp file
+				temp_image = new File("C:\\JangleImages\\" + file_name);
+				//Download the file to C:\\JangleImages\\file_name
+				image_file.downloadToFile(temp_image);
+				/*The next block of code, the try/catch statement deals with
+				 * handling the image once it's been downloaded*/
+				try {
+					/*Very important. A problem that I ran into was that Jangle
+					 * would try to send the image before it's even been downloaded,
+					 * so to mitigate that I set the thread to sleep for 1000ms,
+					 * or 1 second to allow the image time to download, thus negating
+					 * the problems that were occuring.*/
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					//Print stack trace if exception
+					e.printStackTrace();
+				}
+				/*Still in the for loop, and the image is downloaded. Now determining
+				 * how to handle the image that has been downloaded*/
+				if (contains_image) {
+					//If there's an image, send it to the textlog.
+					textlog.sendFile(temp_image).complete();
+					try {
+						//Then, if it exists, delete the image using its given path
+						Files.deleteIfExists(temp_image.toPath());
+					} catch (IOException e) {
+						//Print stack trace if exception
+						e.printStackTrace();
+					} 
+					//Send identification information to the textlog.
+					textlog.sendMessage("```\n" + "The above image ^" + "\nAuthor: " + author + "\n" + "Channel: "
+							+ event.getChannel() + "\nTime: " + java.time.LocalDateTime.now() + "```").complete();
+					System.out.println("Image sent to textlog @" + java.time.LocalDateTime.now());
+				}
+			}
+		}
+		//If there is accompanying text, or any text in general, enact this statement
+		//This also will always apply if there's content, regardless of whether there
+		//is an image or not.
+		if (content.length() > 0) {
+			//Send identification information to the textlog.
+			textlog.sendMessage("```\n" + "\"" + content + "\"" + "\nAuthor: " + author + "\n" + "Channel: "
+					+ event.getChannel() + "\nTime: " + java.time.LocalDateTime.now() + "```").complete();
+			System.out.println("Message sent to textlog @" + java.time.LocalDateTime.now());
+		}
 
 	}
 
@@ -759,8 +832,7 @@ public class Commands {
 			if (user_vc != null) {
 				channel.sendMessage("Joining " + "**" + user_vc.getName() + "**" + ".").complete();
 				audioManager.openAudioConnection(user_vc);
-			}
-			else {
+			} else {
 				channel.sendMessage("Please join a voice channel.").complete();
 			}
 		}
@@ -768,9 +840,10 @@ public class Commands {
 
 	public void Leave(String command) {
 		if (command.equals("leave")) {
-status = audioManager.getConnectionStatus();
-channel.sendMessage("Leaving " + "**" + user_vc.getName() + "**" + ".").complete();
+			status = audioManager.getConnectionStatus();
+			channel.sendMessage("Leaving " + "**" + user_vc.getName() + "**" + ".").complete();
 			audioManager.closeAudioConnection();
 		}
 	}
+
 }
