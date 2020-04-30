@@ -1,8 +1,6 @@
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
@@ -10,6 +8,7 @@ import java.util.Scanner;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import music.PlayerManager;
 import net.dv8tion.jda.api.audio.hooks.ConnectionStatus;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Message.Attachment;
@@ -19,6 +18,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.managers.AudioManager;
+
 
 public class Commands {
 	String content, prefix, command, flip_name, authorSend, peen_file_name, correctArray, printed, dadJoke, s, s1, s2,
@@ -36,6 +36,8 @@ public class Commands {
 	VoiceChannel user_vc;
 	AudioManager audioManager;
 	ConnectionStatus status;
+	PlayerManager manager;
+	TextChannel jangle_channel;
 
 	public Commands(Message mess, String cont, MessageChannel chan, User aut, MessageReceivedEvent even) {
 		message = mess;
@@ -69,6 +71,8 @@ public class Commands {
 		scan = new Scanner(System.in);
 		user_vc = event.getMember().getVoiceState().getChannel();
 		audioManager = event.getGuild().getAudioManager();
+		manager = PlayerManager.getInstance();
+		jangle_channel = event.getGuild().getTextChannelById("705237638273171546");
 	}
 
 	public void WhenInputReceived() {
@@ -97,6 +101,9 @@ public class Commands {
 				Factoring(command);
 				Join(command);
 				Leave(command);
+				Play(command);
+				Stop(command);
+				Volume(command);
 			}
 		}
 	}
@@ -846,4 +853,35 @@ public class Commands {
 		}
 	}
 
+	public void Play(String command) {
+		if (command.substring(0, 4).equals("play")) {
+			String[] split_into_two = content.split(" ");
+			String URL = split_into_two[1];
+			//channel.sendMessage("Playing a test song").complete();
+			if (user_vc != null) {
+				channel.sendMessage("Joining " + "**" + user_vc.getName() + "**" + ".").complete();
+				audioManager.openAudioConnection(user_vc);
+				manager.loadAndPlay(jangle_channel, URL);
+				manager.getGuildMusicManager(event.getGuild()).player.setVolume(10);
+			} else {
+				channel.sendMessage("Please join a voice channel.").complete();
+			}
+			
+		}
+	}
+
+	public void Stop(String command) {
+		if (command.equals("stop"));{
+			manager.getGuildMusicManager(event.getGuild()).player.destroy();
+		}
+	}
+
+	public void Volume(String command) {
+		if (command.substring(0, 6).equals("volume")){
+			String[] split_into_volume = command.split(" ");
+			manager.getGuildMusicManager(event.getGuild()).player.setVolume(Integer.parseInt(split_into_volume[1]));
+			channel.sendMessage("Changing volume to: " + split_into_volume[1] + "%").complete();
+
+		}
+	}
 }
