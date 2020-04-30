@@ -8,14 +8,7 @@ import java.util.Scanner;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-
 import music.PlayerManager;
-import music.TrackScheduler;
 import net.dv8tion.jda.api.audio.hooks.ConnectionStatus;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Message.Attachment;
@@ -26,8 +19,12 @@ import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.managers.AudioManager;
 
-
 public class Commands {
+	/*
+	 * A lot of variables are being declared here. Currently working to see if I can
+	 * clean this up, I imagine a lot of these do not need to be global variables
+	 * throughout the class.
+	 */
 	String content, prefix, command, flip_name, authorSend, peen_file_name, correctArray, printed, dadJoke, s, s1, s2,
 			s3, s4, s5, s51, version;
 	String[] htCount;
@@ -46,19 +43,39 @@ public class Commands {
 	PlayerManager manager;
 	TextChannel jangle_channel;
 
+	/*
+	 * Constructor for the Commands class. It takes in all the data created in
+	 * #myEventListener from the message received event and organizes it into
+	 * different categories.
+	 */
 	public Commands(Message mess, String cont, MessageChannel chan, User aut, MessageReceivedEvent even) {
+		// Event distribution
 		message = mess;
 		content = cont;
 		channel = chan;
 		author = aut;
 		event = even;
+		// Prefix
 		prefix = ">";
+		// Version update
+		version = "3.0.0";
+		/*
+		 * One problem I ran into was that in using command, as opposed to content to
+		 * simplify things, there sometimes would not be a substring of a given length.
+		 * This often occurred with images - there was no message content to take a
+		 * command from. So I implemented this if/else statement to get rid of the
+		 * exceptions that that issue was causing.
+		 */
 		if (content.length() > 0) {
 			command = content.substring(1, content.length()).toLowerCase();
-		}
-		else {
+		} else {
 			command = "";
 		}
+		/*
+		 * I believe that most of the variables below this line don't need to be in the
+		 * constructor. So that's going to be a work in progress of categorizing and
+		 * moving them to their respective places/methods.
+		 */
 		flipData = new WriteFile("flipTrack.txt", true);
 		flip_name = "flipTrack.txt";
 		flipFile = new ReadFile(flip_name);
@@ -74,21 +91,49 @@ public class Commands {
 		s4 = "i’m";
 		s5 = "i";
 		s51 = "am";
-		version = "3.0.0";
+		// Scanner for console input
 		scan = new Scanner(System.in);
+		// Voice channel denoting where the user is.
 		user_vc = event.getMember().getVoiceState().getChannel();
+		// Creating the audio manager
 		audioManager = event.getGuild().getAudioManager();
+		// Manager for PlayerManager
 		manager = PlayerManager.getInstance();
+		// TextChannel denoting the jangle channel
 		jangle_channel = event.getGuild().getTextChannelById("705237638273171546");
 	}
 
+	/*
+	 * This is the driving function for handling commands. This will happen
+	 * everytime a message is received, as shown in #myEventListener. It checks
+	 * through each of the commands to see which one matches the prefix. TODO Break
+	 * loop when a command is activated rather than looping through the rest.
+	 */
 	public void WhenInputReceived() {
+		// Textlog is called every single time this method is invoked.
 		Textlog();
+		/*
+		 * A problem I ran into was that if the content size was 0, exceptions would
+		 * occur. So I put in this statement to actively check and see if there IS
+		 * content to check.
+		 */
 		if (content.length() > 0) {
+			/*
+			 * The functions below, but above the if statement are text-based commands that
+			 * execute without the prefix. Generally, these are jokes that respond to
+			 * something users have said that triggers a keyword.
+			 */
 			DadJoke();
 			Beemovie();
 			Obama();
+			/*
+			 * The functions in the following if statement are all COMMANDS that must be
+			 * invoked using the prefix.
+			 */
 			if (content.startsWith(prefix)) {
+				// TODO once again, find a way to handle rather than if/else looping.
+				// TODO organize better/more used commands to the top.
+				// TODO break the statement once a command is executed.
 				Help(command);
 				Info(command);
 				Random(command);
@@ -117,37 +162,62 @@ public class Commands {
 
 	/* Below are all methods relating to commands */
 	public void Help(String command) {
+		/*
+		 * Command description: Lists all of the commands that Jangle has that can be
+		 * invoked using the prefix.
+		 */
 		if (command.equals("help")) {
+			// Send list
 			channel.sendMessage(
 					"```Commands:\n>ping\n>pizzatime?\n>tictactoe\n>jingle\n>beemovie (please be careful with this one)"
 							+ "\n>luckynum\n>factor\n>peen\n>flip\n>random\n>version\n>info\n>rots```")
 					.complete();
+			// Console log
 			System.out.println("Help completed @" + java.time.LocalDateTime.now());
 		}
 	}
 
 	public void Info(String command) {
+		/*
+		 * TODO get rid of Info. Instead, make each command modular. For example,
+		 * ">help info" woudl give info on help, rather than listing all info at once.
+		 */
+		/*
+		 * Command description: What this command currently does is send info on how to
+		 * use each command (it's VERY outdated).
+		 */
 		if (command.equals("info")) {
+			// Send info
 			channel.sendMessage("```Commands:\n>ping [Jangle's ms response time]\n>pizzatime?\n>tictactoe\n>"
 					+ "jingle\n>beemovie [2% odds to print bee movie] \n>" + "luckynum [gives a number 1-100]\n"
 					+ ">factor ['>factor 1 2 3' factors x²+2x+3]" + "\n"
 					+ ">peen ['>peen @name' to give penis length of @name]\n" + ">flip [flips a coin]\n" + ">random\n"
 					+ ">version\n" + ">rots [sends the entire script of Star Wars: Episode III]```").complete();
+			// Console log
 			System.out.println("Info completed @" + java.time.LocalDateTime.now());
 		}
 	}
 
 	public void Random(String command) {
+		/* Command description: Selects a random number and send it to the user. */
 		if (command.equals("random")) {
+			// Creates a new random number from 1-100
 			Random randomNum = new Random();
 			int random = randomNum.nextInt(100) + 1;
 			channel.sendMessage("Random number: " + random).complete();
+			// Console log
 			System.out.println("Random completed @" + java.time.LocalDateTime.now());
 
 		}
 	}
 
 	public void Ping(String command) {
+		/*
+		 * Command description: Sends a corresponding pong message with the time it
+		 * takes to ping the gateway to the user.
+		 */
+		// TODO assign event.getJDA().getGatewayPing() to a string varibale for cleaner
+		// code.
 		if (command.equals("ping")) {
 			channel.sendMessage("Pong! " + event.getJDA().getGatewayPing() + "ms").complete();
 			System.out.println("Pong completed @" + java.time.LocalDateTime.now());
@@ -156,34 +226,69 @@ public class Commands {
 	}
 
 	public void Flip(String command) {
+		/*
+		 * Command description: Flips a coin, then logs those flips to a file. In that
+		 * file, all the flips are stored to create data for the use about how accurate
+		 * the randomness is. Goal is 50% and in time it will even out. Once flip has
+		 * been stored, logged, and declared, a bunch of data is output to the user
+		 * including, but not limited to, percentages of possibilities, what the flip
+		 * was, and total number of flips.
+		 */
 		if (command.equals("flip")) {
+			// Initialize head & tail values to 0. For reference, header is for heads and
+			// tailer is for tails. Dumb variables names, I know.
 			header = 0;
 			tailer = 0;
+			// Declares a new random, either 0 or 1.
 			Random flipNum = new Random();
+			// Assigns the int to the random (0 or 1).
 			int headOrTail = flipNum.nextInt(2);
 
+			// If it is 0, it's heads
 			if (headOrTail == 0) {
-				// channel.sendMessage("Heads!").complete();
+				/*
+				 * Try/catch statement necessary because we're writing to the file. The file in
+				 * this case is flipData, and it's where all the flips are stored.
+				 */
 				try {
+					// Write "Heads!"
 					flipData.writeToFile("Heads!");
 				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			} else if (headOrTail == 1) {
-				// channel.sendMessage("Tails!").complete();
-				try {
-					flipData.writeToFile("Tails!");
-				} catch (IOException e) {
+					// Print stack trace with exception
 					e.printStackTrace();
 				}
 
 			}
+			// If it is 1, it's tails.
+			else if (headOrTail == 1) {
+				/*
+				 * Try/catch statement necessary because we're writing to the file. The file in
+				 * this case is flipData, and it's where all the flips are stored.
+				 */ try {
+					// Write "Tails!"
+					flipData.writeToFile("Tails!");
+				} catch (IOException e) {
+					// Print stack trace with exception
+					e.printStackTrace();
+				}
+
+			}
+			/*
+			 * Try/catch statement because we need to open the flipFile to read in all the
+			 * data.
+			 */
 			try {
 				htCount = flipFile.OpenFile();
 			} catch (IOException e) {
+				// Print stack trace with exception
 				e.printStackTrace();
 			}
 
+			/*
+			 * What this for loop does is go through the length of the file, and count each
+			 * time that either a "Heads!" or a "Tails!" appears. It then increments the
+			 * head/tail count based upon the quantities found.
+			 */
 			for (int read = 0; read < htCount.length; read++) {
 				if (htCount[read].equals("Heads!")) {
 					header++;
@@ -192,18 +297,23 @@ public class Commands {
 					tailer++;
 				}
 			}
+			/* The following commands are the output to the user. */
+			// If it's heads
 			if (headOrTail == 0) {
 				channel.sendMessage("Heads!\n" + "```Total Heads: " + header + "\nTotal Tails: " + tailer + "\n"
 						+ ((header / (header + tailer) * 100) + "% Heads\n"
 								+ ((tailer / (header + tailer) * 100) + "% Tails```")))
 						.complete();
 
-			} else if (headOrTail == 1) {
+			}
+			// If it's tails
+			else if (headOrTail == 1) {
 				channel.sendMessage("Tails!\n" + "```Total Heads: " + header + "\nTotal Tails: " + tailer + "\n"
 						+ ((header / (header + tailer) * 100) + "% Heads\n"
 								+ ((tailer / (header + tailer) * 100) + "% Tails```")))
 						.complete();
 			}
+			// Console output
 			System.out.println("Flip completed @" + java.time.LocalDateTime.now());
 
 		}
@@ -211,63 +321,102 @@ public class Commands {
 	}
 
 	public void Peen(String command) {
-		// dick size works
-		// -----------------------------------------------------------------------------------------------------------
-		if (command.length() >= 4) {
-			command = command.substring(0, 4);
-		} else {
-			command = "not_peen";
-		}
-		if (command.equals("peen")) {
-
+		/*
+		 * Command description: When rolled, Peen stores the penis length of a given
+		 * user, be it the user who sent the command or a specified user in the command
+		 * parameters. It then loops through all the stored users and the IDs associated
+		 * with them so that once rolled, a person's penis length stays static. Then, it
+		 * outputs the penis length to the user.
+		 */
+		if (command.length() >= 4 && command.equals("peen")) {
+			/*
+			 * First thing that we do is split the command into two pieces. The command
+			 * portion, peenPeople[0] and the name peenPeople[1].
+			 */
 			String[] peenPeople = content.split(" ");
+			/*
+			 * Determining the author. If the length is 2, then we go to the following if
+			 * statement
+			 */
 			if (peenPeople.length == 2) {
+				// Getting rid of exclamation marks
 				authorSend = peenPeople[1].replaceAll("!", "");
-				// System.out.println(authorSend);
-			} else {
+			}
+			/*
+			 * If the length is anything other than 2, then we will assume that the author/
+			 * person whom we're measuring is the user who intiated the command.
+			 */
+			else {
 				authorSend = author.getAsMention().toString();
 			}
 
+			/* Penis size is somewhere in the range of 1-18. */
 			Random randoshin = new Random();
+			// Assign penis size.
 			int peenSize = randoshin.nextInt(18) + 1;
+			/* Try/catch loop necessary because we're opening files and writing to them. */
 			try {
+				// String array comprised of data from the peen_file.
 				String[] aryLines = peen_file.OpenFile();
+				/*
+				 * A problem that was run into was that aryLines wasn't exactly the right array.
+				 * So what I did was create a string comprised of all the data from aryLines,
+				 * then split it up and put it into a new array.
+				 */
 				for (int y = 0; y < aryLines.length; y++) {
 					correctArray += " " + aryLines[y];
 				}
+				// This is the new array that everything is based off of.
 				String[] whatWeBaseItOff = correctArray.split(" ");
-				// System.out.println(Arrays.toString(whatWeBaseItOff));
-				// System.out.println(author.getId());
 
+				// Creates two switches for the following while loops.
 				Boolean thisIsSwitch = true;
 				Boolean biggerSwitch = true;
-				// System.out.println(authorSend);
+
+				// Both switches start off as true
 				while (biggerSwitch) {
 					if (thisIsSwitch) {
+						/*
+						 * First things first, we check for the custom messages. What these do is loop
+						 * through and look for a specific name/ID that is customized to a person. In
+						 * this case it's Adam and I.
+						 */
 						for (int x = 0; x < whatWeBaseItOff.length; x++) {
+							// This ID corresponds to Adam
 							if (whatWeBaseItOff[x].equals("<@308761110394306560>")
 									&& authorSend.replace("!", "").equals("<@308761110394306560>")) {
 								channel.sendMessage("<@308761110394306560> has a twenty foot long schlong.").complete();
 								System.out.println("Size @" + java.time.LocalDateTime.now());
+								// Stop the loop by turning x to be a value higher than equal
 								x = whatWeBaseItOff.length;
+								// Switch both loops off
 								thisIsSwitch = false;
 								biggerSwitch = false;
+								// This ID corresponds to Chris
 							} else if (whatWeBaseItOff[x].equals("<@180825351109214208>")
 									&& authorSend.replace("!", "").equals("<@180825351109214208>")) {
 								channel.sendMessage("<@180825351109214208> has a ten foot long schlong.").complete();
 								System.out.println("Size @" + java.time.LocalDateTime.now());
+								// Stop the loop by turning x to be a value higher than equal
 								x = whatWeBaseItOff.length;
+								// Switch both loops off
 								thisIsSwitch = false;
 								biggerSwitch = false;
 							}
 						}
+						// Now, this loop is executed if neither of the IDs above match the given ID.
 						if (thisIsSwitch) {
+							/* Loops through the array of IDs and penis sizes */
 							for (int ab = 0; ab < whatWeBaseItOff.length; ab++) {
+								// If the ID == specified author's, send the message
 								if (whatWeBaseItOff[ab].equals(authorSend)) {
 									channel.sendMessage(whatWeBaseItOff[ab] + "'s penis size is "
+									// Uses the next index for the actual penis size
 											+ whatWeBaseItOff[ab + 1] + " inches.").complete();
 									System.out.println("Size @" + java.time.LocalDateTime.now());
+									// Cancels loop by making ab bigger than equal
 									ab = whatWeBaseItOff.length;
+									// Switches off loops
 									thisIsSwitch = false;
 									biggerSwitch = false;
 								}
@@ -275,28 +424,35 @@ public class Commands {
 							}
 						}
 					}
-
+					/*
+					 * At the end, if the second switch was never executed, meanining that the
+					 * author ID was NOT listed in the storage, we write a NEW storage module with
+					 * the new ID.
+					 */
 					if (thisIsSwitch) {
+						// author ID + penis size written to a string.
 						printed = (authorSend + " " + peenSize);
+						// Write the string to the file.
 						peen_data.writeToFile(printed);
+						// Console output that a new entry was logged.
 						System.out.println("Something written @" + java.time.LocalDateTime.now());
+						/* Following lines encompass updating arrays like we initially did */
 						aryLines = peen_file.OpenFile();
 						for (int y = 0; y < aryLines.length; y++) {
 							correctArray += " " + aryLines[y];
 						}
-						// System.out.println(Arrays.toString(whatWeBaseItOff));
 						whatWeBaseItOff = correctArray.split(" ");
-
+						// Loop will restart with the new data.
 					}
 				}
 			}
 
 			catch (IOException e) {
+				// Print stack trace exception
 				e.printStackTrace();
 			}
 
 		}
-		// -------------------------------------------------------------------------------------------------------------------------------
 	}
 
 	public void Init(String command) {
@@ -614,72 +770,79 @@ public class Commands {
 	}
 
 	public void Textlog() {
-		//Textlog channel creation
+		// Textlog channel creation
 		TextChannel textlog = event.getGuild().getTextChannelById("531953276816719874");
-		/*What's going on here is that I've created an arrayList of the attachments
-		 * found within a given message. What this will allow me to do is go
-		 * through each attachment and handle it separately*/
+		/*
+		 * What's going on here is that I've created an arrayList of the attachments
+		 * found within a given message. What this will allow me to do is go through
+		 * each attachment and handle it separately
+		 */
 		List<Attachment> image = message.getAttachments();
-		//Creating the attachment, which will get re-assigned for each index
+		// Creating the attachment, which will get re-assigned for each index
 		Attachment image_file;
-		//determining whether or not there is anything in the arrayList
+		// determining whether or not there is anything in the arrayList
 		boolean contains_image = false;
-		//Initialize file_name
+		// Initialize file_name
 		String file_name = "";
-		//Initialize the file we'll be working with
+		// Initialize the file we'll be working with
 		File temp_image = null;
-		//If there are attachments, proceed
+		// If there are attachments, proceed
 		if (image.size() > 0) {
-			//It does contain an image
+			// It does contain an image
 			contains_image = true;
-			//This will loop through each index of the arrayList and handle each
-			//attachment separately.
+			// This will loop through each index of the arrayList and handle each
+			// attachment separately.
 			for (int x = 0; x < image.size(); ++x) {
-				//Assign the image file to index 'x'
+				// Assign the image file to index 'x'
 				image_file = image.get(x);
-				//Assign file name
+				// Assign file name
 				file_name = image_file.getFileName();
-				//Create the temp file
+				// Create the temp file
 				temp_image = new File("C:\\JangleImages\\" + file_name);
-				//Download the file to C:\\JangleImages\\file_name
+				// Download the file to C:\\JangleImages\\file_name
 				image_file.downloadToFile(temp_image);
-				/*The next block of code, the try/catch statement deals with
-				 * handling the image once it's been downloaded*/
+				/*
+				 * The next block of code, the try/catch statement deals with handling the image
+				 * once it's been downloaded
+				 */
 				try {
-					/*Very important. A problem that I ran into was that Jangle
-					 * would try to send the image before it's even been downloaded,
-					 * so to mitigate that I set the thread to sleep for 1000ms,
-					 * or 1 second to allow the image time to download, thus negating
-					 * the problems that were occuring.*/
+					/*
+					 * Very important. A problem that I ran into was that Jangle would try to send
+					 * the image before it's even been downloaded, so to mitigate that I set the
+					 * thread to sleep for 1000ms, or 1 second to allow the image time to download,
+					 * thus negating the problems that were occuring.
+					 */
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
-					//Print stack trace if exception
+					// Print stack trace if exception
 					e.printStackTrace();
 				}
-				/*Still in the for loop, and the image is downloaded. Now determining
-				 * how to handle the image that has been downloaded*/
+				/*
+				 * Still in the for loop, and the image is downloaded. Now determining how to
+				 * handle the image that has been downloaded
+				 */
 				if (contains_image) {
-					//If there's an image, send it to the textlog.
+					// If there's an image, send it to the textlog.
 					textlog.sendFile(temp_image).complete();
 					try {
-						//Then, if it exists, delete the image using its given path
+						// Then, if it exists, delete the image using its given path
 						Files.deleteIfExists(temp_image.toPath());
 					} catch (IOException e) {
-						//Print stack trace if exception
+						// Print stack trace if exception
 						e.printStackTrace();
-					} 
-					//Send identification information to the textlog.
+					}
+					// Send identification information to the textlog.
 					textlog.sendMessage("```\n" + "The above image ^" + "\nAuthor: " + author + "\n" + "Channel: "
 							+ event.getChannel() + "\nTime: " + java.time.LocalDateTime.now() + "```").complete();
 					System.out.println("Image sent to textlog @" + java.time.LocalDateTime.now());
 				}
 			}
 		}
-		//If there is accompanying text, or any text in general, enact this statement
-		//This also will always apply if there's content, regardless of whether there
-		//is an image or not.
+		// If there is accompanying text, or any text in general, enact this statement
+		// This also will always apply if there's content, regardless of whether there
+		// is an image or not.
 		if (content.length() > 0) {
-			//Send identification information to the textlog.
+			// Send identification information to the textlog.
 			textlog.sendMessage("```\n" + "\"" + content + "\"" + "\nAuthor: " + author + "\n" + "Channel: "
 					+ event.getChannel() + "\nTime: " + java.time.LocalDateTime.now() + "```").complete();
 			System.out.println("Message sent to textlog @" + java.time.LocalDateTime.now());
@@ -864,7 +1027,7 @@ public class Commands {
 		if (command.length() >= 4 && command.substring(0, 4).equals("play")) {
 			String[] split_into_two = content.split(" ");
 			String URL = split_into_two[1];
-			//channel.sendMessage("Playing a test song").complete();
+			// channel.sendMessage("Playing a test song").complete();
 			if (user_vc != null) {
 				audioManager.openAudioConnection(user_vc);
 				manager.loadAndPlay(jangle_channel, URL);
@@ -872,18 +1035,20 @@ public class Commands {
 			} else {
 				channel.sendMessage("Please join a voice channel.").complete();
 			}
-			
+
 		}
 	}
 
 	public void Stop(String command) {
-		if (command.equals("stop"));{
+		if (command.equals("stop"))
+			;
+		{
 			manager.getGuildMusicManager(event.getGuild()).player.destroy();
 		}
 	}
 
 	public void Volume(String command) {
-		if (command.length() >= 6 && command.substring(0, 6).equals("volume")){
+		if (command.length() >= 6 && command.substring(0, 6).equals("volume")) {
 			String[] split_into_volume = command.split(" ");
 			manager.getGuildMusicManager(event.getGuild()).player.setVolume(Integer.parseInt(split_into_volume[1]));
 			channel.sendMessage("Changing volume to: " + split_into_volume[1] + "%").complete();
