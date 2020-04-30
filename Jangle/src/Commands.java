@@ -105,7 +105,7 @@ public class Commands {
 		// TextChannel denoting the jangle channel
 		jangle_channel = event.getGuild().getTextChannelById("705237638273171546");
 	}
-
+//test
 	/*
 	 * This is the driving function for handling commands. This will happen
 	 * everytime a message is received, as shown in #myEventListener. It checks
