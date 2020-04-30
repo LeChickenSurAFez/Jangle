@@ -18,6 +18,9 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.managers.AudioManager;
+import utility.Methods;
+import utility.ReadFile;
+import utility.WriteFile;
 
 public class Commands {
 	/*
@@ -516,6 +519,7 @@ public class Commands {
 			// System.out.println("Checkpoint 2 Factoring Completed " +
 			// java.time.LocalDateTime.now());
 
+			@SuppressWarnings("unused")
 			Methods Method = new Methods(a, b, c);
 			channel.sendMessage("\nPolynomial: ").complete();
 			// Method.Polynomial();

@@ -1,16 +1,19 @@
+package utility;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 public class Methods extends ListenerAdapter {
-	static double a,b,c;
-	static boolean perfect;
-	static boolean posintpos;
-	static boolean negintpos;
-	static boolean posdblpos;
-	static boolean negdblpos;
-	static boolean isInt;
-	static String returnRoot, rootposString, rootnegString;
-	static int rootposIntFinal, rootnegIntFinal;
-	static double rootpos, rootneg, rootposDblFinal, rootnegDblFinal;
+	public static double a;
+	public static double b;
+	public static double c;
+	public static boolean perfect;
+	public static boolean posintpos;
+	public static boolean negintpos;
+	public static boolean posdblpos;
+	public static boolean negdblpos;
+	public static boolean isInt;
+	public static String returnRoot, rootposString, rootnegString;
+	public static int rootposIntFinal, rootnegIntFinal;
+	public static double rootpos, rootneg, rootposDblFinal, rootnegDblFinal;
 
 	
 	public Methods() {
@@ -57,7 +60,7 @@ public class Methods extends ListenerAdapter {
 
 		}
 	}
-	static void PerfectRootCalculations() {
+	public static void PerfectRootCalculations() {
 			for (int y = -100000; y <= 100000; y++) {
 				if (((y * y) == c) && (y * 2 == b) && (a == 1)) {
 					returnRoot = ("This is a perfect sqaure root.\nFactor: " + y + "\nMultiplicty: 2");
