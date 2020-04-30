@@ -8,6 +8,11 @@ import java.util.Scanner;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+
 import music.PlayerManager;
 import net.dv8tion.jda.api.audio.hooks.ConnectionStatus;
 import net.dv8tion.jda.api.entities.Message;
@@ -855,6 +860,13 @@ public class Commands {
 
 	public void Play(String command) {
 		if (command.substring(0, 4).equals("play")) {
+			AudioPlayerManager playerManager = new DefaultAudioPlayerManager();
+			AudioSourceManagers.registerRemoteSources(playerManager);
+			AudioPlayer player_test = playerManager.createPlayer();
+			TrackScheduler trackScheduler = new TrackScheduler(player_test);
+			player_test.addListener(trackScheduler);
+			
+			
 			String[] split_into_two = content.split(" ");
 			String URL = split_into_two[1];
 			//channel.sendMessage("Playing a test song").complete();
