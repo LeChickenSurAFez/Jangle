@@ -8,16 +8,12 @@ import java.util.Scanner;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import music.PlayerManager;
-import net.dv8tion.jda.api.audio.hooks.ConnectionStatus;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.managers.AudioManager;
 import utility.Methods;
 import utility.ReadFile;
 import utility.WriteFile;
@@ -40,11 +36,6 @@ public class Commands {
 	WriteFile flipData, peen_data;
 	ReadFile flipFile, peen_file;
 	Scanner scan;
-	VoiceChannel user_vc;
-	AudioManager audioManager;
-	ConnectionStatus status;
-	PlayerManager manager;
-	TextChannel jangle_channel;
 
 	/*
 	 * Constructor for the Commands class. It takes in all the data created in
@@ -96,23 +87,16 @@ public class Commands {
 		s51 = "am";
 		// Scanner for console input
 		scan = new Scanner(System.in);
-		// Voice channel denoting where the user is.
-		user_vc = event.getMember().getVoiceState().getChannel();
-		// Creating the audio manager
-		audioManager = event.getGuild().getAudioManager();
-		// Manager for PlayerManager
-		manager = PlayerManager.getInstance();
-		// TextChannel denoting the jangle channel
-		jangle_channel = event.getGuild().getTextChannelById("705237638273171546");
+		
 	}
-//test
+
 	/*
 	 * This is the driving function for handling commands. This will happen
 	 * everytime a message is received, as shown in #myEventListener. It checks
 	 * through each of the commands to see which one matches the prefix. TODO Break
 	 * loop when a command is activated rather than looping through the rest.
 	 */
-	public void WhenInputReceived() {
+	public void OnInputReceived() {
 		// Textlog is called every single time this method is invoked.
 		Textlog();
 		/*
@@ -148,17 +132,11 @@ public class Commands {
 				PizzaTime(command);
 				TicTacToe(command);
 				Jingle(command);
-				LuckyNum(command);
 				Version(command);
 				Console(command);
 				Rots(command);
 				Peen(command);
 				Factoring(command);
-				Join(command);
-				Leave(command);
-				Play(command);
-				Stop(command);
-				Volume(command);
 			}
 		}
 	}
@@ -180,6 +158,7 @@ public class Commands {
 		}
 	}
 
+	// TODO: remove
 	public void Info(String command) {
 		/*
 		 * TODO get rid of Info. Instead, make each command modular. For example,
@@ -214,6 +193,7 @@ public class Commands {
 		}
 	}
 
+	// TODO: clean
 	public void Ping(String command) {
 		/*
 		 * Command description: Sends a corresponding pong message with the time it
@@ -458,57 +438,101 @@ public class Commands {
 		}
 	}
 
+	// Obsolete
 	public void Init(String command) {
+		/*
+		 * Command description: Initializes the file to which the penis size function
+		 * will write. At the given time, this method is pretty much obsolete.
+		 */
 		if (command.equals("init")) {
 
 			try {
+				// Write an empty string to the file
 				peen_data.writeToFile(" ");
 			} catch (IOException e) {
+				// Print stack trace
 				e.printStackTrace();
 			}
 		}
 	}
 
+	// TODO: fix
 	public void Snowday(String command) {
+		/*
+		 * Command description: Crawls over a website that has snow day data, obtaining
+		 * relevant text to predict the chance of a snowday the next day. At the moment,
+		 * this is not functioning. Mainly because the website on which the calculator
+		 * is based uses a widget to display the text, rather than a box that can be
+		 * text-crawled over. So, TODO, fix this function.
+		 */
 		if (command.equals("snowday")) {
+			// Initialize document
 			Document doc = null;
+			// Try catch statement since we're crawling over text
 			try {
+				// Assign the URL to the doc & get the text.
 				doc = Jsoup
 						.connect("https://www.snowdaycalculator.com/prediction.php?zipcode=48306&snowdays=0&extra=0&")
 						.get();
 			} catch (IOException e) {
+				// Print stack trace
 				e.printStackTrace();
 			}
+			// String of all the text
 			String snowChance = doc.text();
+			// String to return is created & assigned
 			String toSend = snowChance;
+			// Send all the text to the console
 			System.out.println(toSend);
+			// TODO literally the rest of this function.
 
 		}
 	}
 
 	public void Obama() {
+		/*
+		 * Command description: This isn't so much a command as it is a chatbot
+		 * response. When Jangle notices some combination of
+		 * "I'm going to say the N word", he responds with
+		 * "YOU CANT DO THAT THATS RACIST".
+		 */
+		// Split the content of every message into an array
 		String[] equalityArray = content.split(" ");
+		/*
+		 * For each word in the newly created array, this for loop will go through and
+		 * compare the words to see if they form any combination of the given phrase
+		 * that will trigger a response.
+		 */
 		for (int equal = 0; equal < equalityArray.length; equal++) {
 			if (equal < equalityArray.length - 2 && equalityArray[equal].toLowerCase().equals("say")
 					&& equalityArray[equal + 1].toLowerCase().equals("the")
 					&& equalityArray[equal + 2].toLowerCase().equals("n") && !equalityArray[equal - 1].equals("not")) {
+				// Send message to text channel
 				channel.sendMessage("YOU CAN'T DO THAT THAT'S RACIST").complete();
+				// Console log
 				System.out.println("Mrs Obama saved @" + java.time.LocalDateTime.now());
 			}
 		}
 
 	}
 
+	// TODO: make more efficient.
 	public void Factoring(String command) {
-		// Alright let's do some factoring
-		if (command.length() >= 6) {
-			command = command.substring(0, 6);
-		} else {
-			command = "not_factoring";
-		}
-		if (content.length() > 7 && command.equals("factor")) {
-			// System.out.println("Checkpoint 1 Factoring Completed " +
-			// java.time.LocalDateTime.now());
+		/*
+		 * Command description: This command allows for the user to input 3 numbers,
+		 * corresponding to a polynomial equation that requires factoring. This equation
+		 * is of the form Ax^2+Bx+C. Users enter A B C after factoring, and then the
+		 * method will output to them if the equation is factorable. If it is
+		 * factorable, it will show in a format suhc as (x+1) and (x-2) for ease of use
+		 * with homeowrk assignments. This method draws from the Utility package that I
+		 * created, using the Methods class.
+		 */
+		if (content.length() >= 6 && command.equals("factor")) {
+			/*
+			 * First things first, we split content up into 3 parts, corresponding to the
+			 * three numbers that the user enters, a, b, and c.
+			 */
+			// This is checkpoint 1
 			String[] numberSplit = content.split(" ");
 			String aString = numberSplit[1];
 			int a = Integer.parseInt(aString);
@@ -516,13 +540,25 @@ public class Commands {
 			int b = Integer.parseInt(bString);
 			String cString = numberSplit[3];
 			int c = Integer.parseInt(cString);
-			// System.out.println("Checkpoint 2 Factoring Completed " +
-			// java.time.LocalDateTime.now());
-
+			/*
+			 * The next step is to return to the user a polynomial representation of what
+			 * they have entered.
+			 */
+			// Chekpoint 2 reached
+			// Use of the Methods class. Creates a new object with values a,b, and c for
+			// calculations. There was a warning because the object is never actually used
+			// in this method, but I supressed it.
 			@SuppressWarnings("unused")
 			Methods Method = new Methods(a, b, c);
+			// Start the output to the user
 			channel.sendMessage("\nPolynomial: ").complete();
-			// Method.Polynomial();
+
+			/*
+			 * These four if/else-if statements depend upon whether b & c are positive or
+			 * negative. For formatting's sake, it's set up so that if a variable is
+			 * negative, it will show up as negative in the output.
+			 */
+			// TODO: could make this more efficient by assigning the negative sign earlier.
 			if (Methods.b > 0 && Methods.c > 0) {
 				channel.sendMessage(Methods.a + "x²" + " + " + Methods.b + "x" + " + " + Methods.c).complete();
 			} else if (Methods.b > 0 && Methods.c < 0) {
@@ -535,163 +571,215 @@ public class Commands {
 				channel.sendMessage(Methods.a + "x²" + " - " + Math.abs(Methods.b) + "x" + " - " + Math.abs(Methods.c))
 						.complete();
 			}
-			// System.out.println("Checkpoint 3 Factoring Completed " +
-			// java.time.LocalDateTime.now());
+			// Checkpoint 3 reached.
 
-			// Method.Factor
+			/*
+			 * The next step is to do the calculations. We start of with the perfect root
+			 * calculations, as those are the most obscure.
+			 */
 			Methods.PerfectRootCalculations();
+			// If the calculations are a perfect root, return the root.
 			if (Methods.perfect) {
 				channel.sendMessage(Methods.returnRoot).complete();
-			} else {
+			}
+			// Else, move on to see if the root is a real root or not.
+			else {
 				Methods.RealRootCalculations();
+				/*
+				 * If the positive root string and the negative root stirng both equal "NaN" or
+				 * "Not a Number", then there are no real roots.
+				 */
 				if (Methods.rootposString.equals("NaN") && Methods.rootnegString.equals("NaN")) {
+					// Tell user that there are no real roots.
 					channel.sendMessage("No real roots.").complete();
-				} else {
+				}
+				// If it IS a number, then we go into the more complex calculations.
+				else {
+					// Determine if the root is positive
 					Methods.IsRootPos();
+					// If an int is returned
 					if (Methods.isInt) {
+						// If we have a case of two negative numbers
 						if (Methods.posintpos && Methods.negintpos) {
 							channel.sendMessage(
 									"\nThis is factorable.\nFactors: (x - " + Math.abs(Methods.rootposIntFinal)
 											+ ") and (x - " + Math.abs(Methods.rootnegIntFinal) + ")")
 									.complete();
-							// System.out.println("Checkpoint 4 Factoring Completed " +
-							// java.time.LocalDateTime.now());
-
-						} else if (!Methods.posintpos && !Methods.negintpos) {
+						}
+						// If we have a case of two positive numbers
+						else if (!Methods.posintpos && !Methods.negintpos) {
 							channel.sendMessage(
 									"\nThis is factorable.\nFactors: (x + " + Math.abs(Methods.rootposIntFinal)
 											+ ") and (x + " + Math.abs(Methods.rootnegIntFinal) + ")")
 									.complete();
-							// System.out.println("Checkpoint 4 Factoring Completed " +
-							// java.time.LocalDateTime.now());
-
-						} else if (!Methods.posintpos && Methods.negintpos) {
+						}
+						// If we have a case of a positive number and a negative number
+						else if (!Methods.posintpos && Methods.negintpos) {
 							channel.sendMessage(
 									"\nThis is factorable.\nFactors: (x + " + Math.abs(Methods.rootposIntFinal)
 											+ ") and (x - " + Math.abs(Methods.rootnegIntFinal) + ")")
 									.complete();
-							// System.out.println("Checkpoint 4 Factoring Completed " +
-							// java.time.LocalDateTime.now());
-
-						} else if (Methods.posintpos && !Methods.negintpos) {
+						}
+						// If we have a case of a negative number and a positive number
+						else if (Methods.posintpos && !Methods.negintpos) {
 							channel.sendMessage(
 									"\nThis is factorable.\nFactors: (x - " + Math.abs(Methods.rootposIntFinal)
 											+ ") and (x + " + Math.abs(Methods.rootnegIntFinal) + ")")
 									.complete();
-							// System.out.println("Checkpoint 4 Factoring Completed " +
-							// java.time.LocalDateTime.now());
-
 						}
+						// At this point, checkpoint 4 would be passed
 					}
 
+					// If the number is not an integer and instead a double
 					else {
+						// If we have a case of two negative numbers
 						if (Methods.posdblpos && Methods.negdblpos) {
 							channel.sendMessage(
 									"\nThis is factorable.\nFactors: (x - " + Math.abs(Methods.rootposDblFinal)
 											+ ") and (x - " + Math.abs(Methods.rootnegDblFinal) + ")")
 									.complete();
-							// System.out.println("Checkpoint 4 Factoring Completed " +
-							// java.time.LocalDateTime.now());
-
-						} else if (!Methods.posdblpos && !Methods.negdblpos) {
+						}
+						// If we have a case of two positive numbers
+						else if (!Methods.posdblpos && !Methods.negdblpos) {
 							channel.sendMessage(
 									"\nThis is factorable.\nFactors: (x + " + Math.abs(Methods.rootposDblFinal)
 											+ ") and (x + " + Math.abs(Methods.rootnegDblFinal) + ")")
 									.complete();
-							// System.out.println("Checkpoint 4 Factoring Completed " +
-							// java.time.LocalDateTime.now());
-
-						} else if (!Methods.posdblpos && Methods.negdblpos) {
+						}
+						// If we have a case of a positive number and a negative number
+						else if (!Methods.posdblpos && Methods.negdblpos) {
 							channel.sendMessage(
 									"\nThis is factorable.\nFactors: (x + " + Math.abs(Methods.rootposDblFinal)
 											+ ") and (x - " + Math.abs(Methods.rootnegDblFinal) + ")")
 									.complete();
-							// System.out.println("Checkpoint 4 Factoring Completed " +
-							// java.time.LocalDateTime.now());
-
-						} else if (Methods.posdblpos && !Methods.negdblpos) {
+						}
+						// If we have a case of a negative and a positive number
+						else if (Methods.posdblpos && !Methods.negdblpos) {
 							channel.sendMessage(
 									"\nThis is factorable.\nFactors: (x - " + Math.abs(Methods.rootposDblFinal)
 											+ ") and (x + " + Math.abs(Methods.rootnegDblFinal) + ")")
 									.complete();
-							// System.out.println("Checkpoint 4 Factoring Completed " +
-							// java.time.LocalDateTime.now());
-
 						}
+						// At this point, checkpoint 4 would be passed
 					}
+
 				}
 
 			}
-			// System.out.println("Checkpoint 5 Factoring Completed " +
-			// java.time.LocalDateTime.now());
-
+			// At this point, checkpoint 5 would be passed.
 		}
 	}
 
 	public void DadJoke() {
-		// Dad joke territory
+		/*
+		 * Command description: Whenever a message is detected with the word, or some
+		 * variation of, "I'm", Jangle will respond with "Hi (blank) I'm Jangle. This is
+		 * more of a chatbot feature than an actual command, as it takes no arguments in
+		 * the header.
+		 */
+		// First thing we do is strip text of any illegal characters
 		char[] textChangingChars = { '|', '*', '`', '~', '_', };
+		/*
+		 * For each letter in the content, this for loop will iterate over and check it
+		 * against the array of chars to see if they match. If they match, then the char
+		 * will be removed. This is mainly to get rid of formatting.
+		 */
+		// Outside loop for each letter
 		for (int x = 0; x < content.length(); ++x) {
+			// Inside loop to check aaginst textChangingChars
 			for (int y = 0; y < textChangingChars.length; ++y) {
+				// Checks equality
 				if (content.charAt(x) == textChangingChars[y]) {
+					// Assign replacement char
 					String char_to_replace = Character.toString(content.charAt(x));
+					// Replace
 					content.replace(char_to_replace, "");
 				}
 			}
 		}
+		/*
+		 * By this point, all the illegal characters have been removed. Now, we get to
+		 * the main part of the method, which is returning the actual joke. One thing
+		 * that we noticed when this function was originally created was that it got
+		 * annoying FAST if it happened everytime. To mitigate this, I've assigned a
+		 * range of numbers between 1-100 to return the joke. If the number rolled isn't
+		 * within that range, then the joke doesn't execute.
+		 */
 		Random dadRandom = new Random();
 		int dadChance = dadRandom.nextInt(100) + 1;
+		// Range of execution numbers.
 		if (dadChance >= 1 && dadChance <= 15) {
+			// Initialize the boolean of whether the joke is on or not to be false.
 			dadOn = false;
+			// Initialize the joke as "Hi"
 			dadJoke = "Hi";
-			// System.out.println("Dad Joke Num: " + dadChance + " @" +
-			// java.time.LocalDateTime.now());
+			// Split the rest of the message up into an array
 			String[] dadArray = content.split(" ");
+			// Loop through the array
 			for (int x = 0; x < dadArray.length; x++) {
+				// If any of the variations of "i'm" match, concat the rest of the array onto
+				// the joke
 				if (dadArray[x].toLowerCase().equals(s) || dadArray[x].toLowerCase().equals(s1)
 						|| dadArray[x].toLowerCase().equals(s2) || dadArray[x].toLowerCase().equals(s3)
 						|| dadArray[x].toLowerCase().equals(s4)) {
+					// Concat if true
 					for (int y = (x + 1); y < dadArray.length; y++) {
 						dadJoke = dadJoke.concat(" " + dadArray[y]);
 					}
+					// Console log
 					System.out.println("Dad Joke Checkpoint 2 @" + java.time.LocalDateTime.now());
+					// Dad joke did happen
 					dadOn = true;
-
 				}
 			}
+			// If the dad joke happened, send it to the user in their textchannel
 			if (dadOn) {
 				dadJoke = dadJoke.concat(", I'm Jangle.");
 				channel.sendMessage(dadJoke).complete();
 				System.out.println("Dad Joke Checkpoint 3 @" + java.time.LocalDateTime.now());
-			} else {
-				System.out.println("Dad Joke Num: " + dadChance + " @" + java.time.LocalDateTime.now());
-
 			}
-		} else {
-
+			// Else, send nothing but tell the console what the number was.
+			else {
+				System.out.println("Dad Joke Num: " + dadChance + " @" + java.time.LocalDateTime.now());
+			}
+		}
+		// If the number is not in the range, do nothing
+		else {
 		}
 
 	}
 
 	public void Pingle(String command) {
-		// Andrew's pingle
+		/* Command description: Returns the word "Pongle!", that's pretty much all. */
 		if (command.equals("pingle")) {
+			// Send message
 			channel.sendMessage("Pongle!").complete();
+			// Console log
 			System.out.println("Pongle completed @" + java.time.LocalDateTime.now());
-
 		}
 	}
 
 	public void PizzaTime(String command) {
-		// Pizza time command
+		/*
+		 * Command description: Simple command that just returns the fact that it is,
+		 * indeed, pizzatime.
+		 */
 		if (command.equals("pizzatime?")) {
+			// Send messsage
 			channel.sendMessage("It's pizza time ;)").complete();
+			// Console log.
 			System.out.println("Pizza time completed @" + java.time.LocalDateTime.now());
 		}
 	}
 
 	public void TicTacToe(String command) {
-		// Tic Tac Toe
+		/*
+		 * Command description: This was the very first command that I ever wrote on
+		 * Jangle, and I had VERY high aspirations. It's an absolute mess. I shot way
+		 * too high and all this command does is output the board, but terribly. I have
+		 * no plans to fix this command, rather letting it serve as an indication of how
+		 * far I have come.
+		 */
 		if (command.equals("tictactoe")) {
 			// Setting up the game board
 			String tic1 = ("    |    |    ");
@@ -710,70 +798,99 @@ public class Commands {
 			channel.sendMessage(tic5).complete();
 			channel.sendMessage(tic6choice).complete();
 			channel.sendMessage(tic7).complete();
+
+			// Console log
 			System.out.println("Tictactoe completed @" + java.time.LocalDateTime.now());
 
 		}
 	}
 
 	public void Jingle(String command) {
-		// Jingle Jangle
+		/* Command description: Super simple command that just jangles some keys. */
 		if (command.equals("jingle")) {
+			// Send message
 			channel.sendMessage("Jingle Jangle go the keys <@195284766143021057>").complete();
+			// Console log.
 			System.out.println("Jingle Jangle completed @" + java.time.LocalDateTime.now());
 
 		}
 
 	}
 
-	public void LuckyNum(String command) {
-		// lucky #
-		if (command.equals("luckynum")) {
-			Random rand = new Random();
-			int luckyNum = rand.nextInt(100) + 1;
-			channel.sendMessage("Your lucky number is: " + luckyNum).complete();
-			System.out.println("Luckynum completed @" + java.time.LocalDateTime.now());
-
-		}
-	}
-
 	public void Beemovie() {
+		/* Command description: Outputs the entirety of the bee movie script. */
 		if (command.equals("beemovie")) {
+			/*
+			 * One problem that I ran into this command was that if it worked 100% of the
+			 * time, it could be very easily abused. So, to combat this, I set up a range of
+			 * values that are executed (potentially) by a random number generator. We found
+			 * that 1% was too low, and never happened, but that 2-3% is a good compromise.
+			 */
 			Random BeeRandom = new Random();
 			int beeChance = BeeRandom.nextInt(100) + 1;
+			// 2 chances for it to be executed out of 100.
 			if (beeChance == 1 || beeChance == 2) {
 
+				// Initialize document
 				Document doc = null;
+				// Initialize the boolean controllwing whether it's done or not
 				boolean rotsDone = false;
+				// Initialize indexer in where to start
 				int indexer = 779;
+				// Try catch block for the doc to connect to the website
 				try {
+					/*
+					 * Much like with the snowday calculator, this crawls over the text of the page
+					 * and throws it into the document.
+					 */
 					doc = Jsoup.connect(
 							"http://www.script-o-rama.com/movie_scripts/a1/bee-movie-script-transcript-seinfeld.html")
 							.get();
 				} catch (IOException e) {
+					// Prints stack trace.
 					e.printStackTrace();
 				}
+				// Puts the doc into a string
 				String beeScript = doc.text();
+				// Creates the string to send back
 				String toSend = beeScript;
-				System.out.println(toSend.indexOf("According to all"));
+				// For testing purposes: Shows the index of where the script starts
+				// System.out.println(toSend.indexOf("According to all"));
+
+				// This loop occurs while the indexer is not done or smaller than the limit
 				while (!rotsDone && (indexer <= 56121)) {
+					// If the indexer reachers 54000, send a custom message with the rest.
 					if (indexer >= 54000) {
 						System.out.println(toSend.substring(indexer, 56095));
 						channel.sendMessage(toSend.substring(indexer, 56095)).complete();
+						// Script is done.
 						rotsDone = true;
-					} else {
+					}
+					// Else, while the indexer is below 54000, send messages in heaps of 2000
+					// characters.
+					else {
 						System.out.println(toSend.substring(indexer, indexer + 2000));
 						channel.sendMessage(toSend.substring(indexer, indexer + 2000)).complete();
 						indexer += 2000;
 					}
 				}
+				// Console log
 				System.out.println("Beemovie completed @" + java.time.LocalDateTime.now());
-			} else {
+			}
+			// If the random num generator didn't hit a 1 or two, output that it didn't
+			// occur.
+			else {
 				System.out.println("Beemovie NOT completed @" + java.time.LocalDateTime.now());
 			}
 		}
 	}
 
 	public void Textlog() {
+		/*
+		 * Command description: Logs text, images, and attatchments to the textlog
+		 * channel. Used for safety and logging/archival purposes.
+		 */
+
 		// Textlog channel creation
 		TextChannel textlog = event.getGuild().getTextChannelById("531953276816719874");
 		/*
@@ -855,54 +972,95 @@ public class Commands {
 	}
 
 	public void Version(String command) {
-		if (content.startsWith(prefix) && content.substring(1, content.length()).toLowerCase().equals("version")) {
+		/*
+		 * Command description: Outputs the current version of Jangle, along with author
+		 * information & timestamp.
+		 */
+		if (command.equals("version")) {
+			// Console log
 			System.out.println("Jangle version " + version + " @ " + java.time.LocalDateTime.now());
+			// Send message
 			channel.sendMessage("Jangle version " + version + ": Chris Cardimen").complete();
 		}
 	}
 
 	public void Console(String command) {
+		/*
+		 * Command description: Allows me to access Jangle and send messages through him
+		 * using a Linux console. It can only be accessed by me, and will freeze him
+		 * until some input is entered into the console, so be wary of that.
+		 */
 		if (command.equals("console") && author.getId().equals("180825351109214208")) {
+			// Creates the textchannel general where the console message will be sent
 			TextChannel general = event.getGuild().getTextChannelById("570627928564432897");
+			// Take in a string to be sent to the channel
 			String toConsole = scan.nextLine();
+			// Send the message to general
 			general.sendMessage(toConsole).complete();
 		}
 
 	}
 
 	public void Rots(String command) {
+		/*
+		 * Command description: Outputs the entirety of the script for Star Wars Episode
+		 * 3: Revenge of the Sith
+		 */
 		if (command.equals("rots")) {
+			/*
+			 * Similar to beemovie, we ran into the issue that if this command were to
+			 * execute 100% of the time, it could be easily abused. So, I've created a
+			 * random number generator to generate a number between 1 and 100.
+			 */
 			Random rotsRandom = new Random();
 			int rotsChance = rotsRandom.nextInt(100) + 1;
+			// The command will only execute when rotsChance == 1.
 			if (rotsChance == 1) {
+				// Initialize document
 				Document doc = null;
+				// Boolean to determine whether the script is done.
 				boolean rotsDone = false;
+				// Initialize the index to start at.
 				int indexer = 757;
+				// Try/catch statement to crawl over the script website text
 				try {
 					doc = Jsoup.connect("https://www.imsdb.com/scripts/Star-Wars-Revenge-of-the-Sith.html").get();
 				} catch (IOException e) {
+					// Print stack trace
 					e.printStackTrace();
 				}
+				// Assign the document text to a sring
 				String rotsScript = doc.text();
+				// Assing the previous string to another string to send
 				String toSend = rotsScript;
+				// While loop that loops while the script is not done & index is smaller than
+				// end
 				while (!rotsDone && (indexer <= 176061)) {
+					// If the index is at its end, finish it custom.
 					if (indexer >= 174000) {
 						System.out.println(toSend.substring(indexer, 175859));
 						channel.sendMessage(toSend.substring(indexer, 175859)).complete();
+						// Script is done
 						rotsDone = true;
-					} else {
+					}
+					// Otherwise, will increment in 2000 character messages.
+					else {
 						System.out.println(toSend.substring(indexer, indexer + 2000));
 						channel.sendMessage(toSend.substring(indexer, indexer + 2000)).complete();
 						indexer += 2000;
 					}
 				}
+				// Console log
 				System.out.println("RoTS completed @" + java.time.LocalDateTime.now());
-			} else {
+			}
+			// Console log
+			else {
 				System.out.println("RoTS NOT completed @" + java.time.LocalDateTime.now());
 			}
 		}
 	}
 
+	// TODO: Actually create an AR game
 	public void ARGame() {
 		/*
 		 * WriteFile countData = new WriteFile("arcounter.txt", true); String
@@ -1008,55 +1166,4 @@ public class Commands {
 
 	}
 
-	public void Join(String command) {
-		if (command.equals("join")) {
-			if (user_vc != null) {
-				channel.sendMessage("Joining " + "**" + user_vc.getName() + "**" + ".").complete();
-				audioManager.openAudioConnection(user_vc);
-			} else {
-				channel.sendMessage("Please join a voice channel.").complete();
-			}
-		}
-	}
-
-	public void Leave(String command) {
-		if (command.equals("leave")) {
-			status = audioManager.getConnectionStatus();
-			channel.sendMessage("Leaving " + "**" + user_vc.getName() + "**" + ".").complete();
-			audioManager.closeAudioConnection();
-		}
-	}
-
-	public void Play(String command) {
-		if (command.length() >= 4 && command.substring(0, 4).equals("play")) {
-			String[] split_into_two = content.split(" ");
-			String URL = split_into_two[1];
-			// channel.sendMessage("Playing a test song").complete();
-			if (user_vc != null) {
-				audioManager.openAudioConnection(user_vc);
-				manager.loadAndPlay(jangle_channel, URL);
-				manager.getGuildMusicManager(event.getGuild()).player.setVolume(10);
-			} else {
-				channel.sendMessage("Please join a voice channel.").complete();
-			}
-
-		}
-	}
-
-	public void Stop(String command) {
-		if (command.equals("stop"))
-			;
-		{
-			manager.getGuildMusicManager(event.getGuild()).player.destroy();
-		}
-	}
-
-	public void Volume(String command) {
-		if (command.length() >= 6 && command.substring(0, 6).equals("volume")) {
-			String[] split_into_volume = command.split(" ");
-			manager.getGuildMusicManager(event.getGuild()).player.setVolume(Integer.parseInt(split_into_volume[1]));
-			channel.sendMessage("Changing volume to: " + split_into_volume[1] + "%").complete();
-
-		}
-	}
 }

@@ -1,3 +1,4 @@
+import music.MusicCommands;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
@@ -22,8 +23,10 @@ public class myEventListener extends ListenerAdapter {
 		MessageChannel channel = event.getChannel();
 		User author = event.getAuthor();
 
+		MusicCommands musicCommands = new MusicCommands(message, content, channel, author, event);
+		musicCommands.onInputReceived();
 		Commands command = new Commands(message, content, channel, author, event);
-		command.WhenInputReceived();
+		command.OnInputReceived();
+
 	}
-	
 }
