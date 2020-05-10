@@ -1,12 +1,15 @@
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Document.OutputSettings;
+import org.jsoup.safety.Whitelist;
 
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Message.Attachment;
@@ -87,7 +90,7 @@ public class Commands {
 		s51 = "am";
 		// Scanner for console input
 		scan = new Scanner(System.in);
-		
+
 	}
 
 	/*
@@ -122,6 +125,7 @@ public class Commands {
 				// TODO organize better/more used commands to the top.
 				// TODO break the statement once a command is executed.
 				Help(command);
+				Serial(command);
 				Info(command);
 				Random(command);
 				Ping(command);
@@ -1057,6 +1061,62 @@ public class Commands {
 			else {
 				System.out.println("RoTS NOT completed @" + java.time.LocalDateTime.now());
 			}
+		}
+	}
+
+	public void Serial(String command) {
+		/*
+		 * Command description: When given a Elgin watch serial number, crawls/indexes
+		 * therough the elgin national watch database to give important information on
+		 * the aforementioned watch movement.
+		 */
+		if (command.substring(0, 6).equals("serial")) {
+			String to_send_to_channel = "";
+			String[] to_split = content.split(" ");
+			String serial_num = to_split[1];
+			// Initialize document
+			Document doc = null;
+			String htmlString = "";
+			// Try/catch statement to crawl over the movement info text
+			try {
+				doc = Jsoup.connect("https://pocketwatchdatabase.com/search/result/elgin/" + serial_num).get();
+			} catch (IOException e) {
+				// Print stack trace
+				e.printStackTrace();
+			}
+
+			// Assign the document text to a sring
+			String watch_database = doc.wholeText();
+			watch_database = watch_database.replaceAll("\t", "");
+			// Initialize the index to start at.
+			int indexer = watch_database.indexOf("Manufacturer:");
+			if (indexer < 0) {
+				to_send_to_channel += "This serial number does not exist in the database.";
+			} else {
+				to_send_to_channel += "```";
+				String information_we_want = watch_database.substring(indexer,
+						watch_database.indexOf("Data Confidence Rating"));
+				for (int x = 0; x < information_we_want.indexOf("Data Research")
+						|| x <= information_we_want.indexOf("U.S."); ++x) {
+					char current = information_we_want.charAt(x);
+					if (current >= 65 && current <= 90) {
+
+						if (to_send_to_channel.charAt(to_send_to_channel.length() - 2) == ':') {
+							to_send_to_channel = to_send_to_channel.substring(0, to_send_to_channel.length() - 1);
+						}
+						to_send_to_channel += " "
+								+ information_we_want.substring(x, information_we_want.indexOf("\n", x)) + "\n";
+						x = information_we_want.indexOf("\n", x) - 1;
+					}
+				}
+				to_send_to_channel += "```";
+			}
+
+			channel.sendMessage(to_send_to_channel).complete();
+
+			// Console log
+			System.out.println("Serial# completed @" + java.time.LocalDateTime.now());
+
 		}
 	}
 
