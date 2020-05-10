@@ -66,8 +66,9 @@ public class MusicCommands {
 		jangle_channel = event.getGuild().getTextChannelById("705237638273171546");
 		// Creates DJ player
 		DJ = manager.getGuildMusicManager(event.getGuild()).player;
-		// Assign name of voice channel
-		voice_channel_name = user_vc.getName();
+		// Assign name of voice channel if not null
+		if (user_vc != null)
+			voice_channel_name = user_vc.getName();
 		// Set up the track scheduler for managing tracks.
 		queue = new TrackScheduler(DJ);
 
