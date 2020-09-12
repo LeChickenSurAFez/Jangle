@@ -55,7 +55,7 @@ public class Commands {
 		// Prefix
 		prefix = ">";
 		// Version update
-		version = "3.0.0";
+		version = "3.0.1";
 		/*
 		 * One problem I ran into was that in using command, as opposed to content to
 		 * simplify things, there sometimes would not be a substring of a given length.
