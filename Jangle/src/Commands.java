@@ -55,7 +55,7 @@ public class Commands {
 		// Prefix
 		prefix = ">";
 		// Version update
-		version = "3.0.0";
+		version = "3.0.1";
 		/*
 		 * One problem I ran into was that in using command, as opposed to content to
 		 * simplify things, there sometimes would not be a substring of a given length.
@@ -923,8 +923,8 @@ public class Commands {
 				// Assign file name
 				file_name = image_file.getFileName();
 				// Create the temp file
-				temp_image = new File("C:\\JangleImages\\" + file_name);
-				// Download the file to C:\\JangleImages\\file_name
+				temp_image = new File("/home/LeChickenSurAFez/JangleImages/" + file_name);
+				// Download the file to /home/LeChickenSurAFez/JangleImages/file_name
 				image_file.downloadToFile(temp_image);
 				/*
 				 * The next block of code, the try/catch statement deals with handling the image
@@ -1076,7 +1076,6 @@ public class Commands {
 			String serial_num = to_split[1];
 			// Initialize document
 			Document doc = null;
-			String htmlString = "";
 			// Try/catch statement to crawl over the movement info text
 			try {
 				doc = Jsoup.connect("https://pocketwatchdatabase.com/search/result/elgin/" + serial_num).get();
@@ -1109,8 +1108,32 @@ public class Commands {
 						x = information_we_want.indexOf("\n", x) - 1;
 					}
 				}
-				to_send_to_channel += "```";
+				int count = 0;
+				if (to_send_to_channel.charAt(to_send_to_channel.length() - 2) == ':') {
+					for (int x = 0; x < to_send_to_channel.length(); ++x) {
+						if (to_send_to_channel.charAt(x) == '\n') {
+							++count;
+						}
+					}
+					System.out.println(count);
+					String temp = "";
+					int max_count = count;
+					count = 0;
+					for (int x = 0; x < to_send_to_channel.length(); ++x) {
+
+						if (count < max_count - 1) {
+							temp += to_send_to_channel.charAt(x);
+						}
+						if (to_send_to_channel.charAt(x) == '\n') {
+							++count;
+						}
+					}
+					to_send_to_channel = temp;
+					// to_send_to_channel = to_send_to_channel.substring(0,
+					// to_send_to_channel.lastIndexOf('\n'));
+				}
 			}
+			to_send_to_channel += "```";
 
 			channel.sendMessage(to_send_to_channel).complete();
 
