@@ -55,7 +55,7 @@ public class Commands {
 		// Prefix
 		prefix = ">";
 		// Version update
-		version = "3.0.1";
+		version = "3.0.2";
 		/*
 		 * One problem I ran into was that in using command, as opposed to content to
 		 * simplify things, there sometimes would not be a substring of a given length.
@@ -122,6 +122,7 @@ public class Commands {
 			 */
 			if (content.startsWith(prefix)) {
 				// TODO once again, find a way to handle rather than if/else looping.
+				//TODO use an array containing the keywords and check against input OR command handler
 				// TODO organize better/more used commands to the top.
 				// TODO break the statement once a command is executed.
 				Help(command);
@@ -731,7 +732,7 @@ public class Commands {
 						dadJoke = dadJoke.concat(" " + dadArray[y]);
 					}
 					// Console log
-					System.out.println("Dad Joke Checkpoint 2 @" + java.time.LocalDateTime.now());
+					//System.out.println("Dad Joke Checkpoint 2 @" + java.time.LocalDateTime.now());
 					// Dad joke did happen
 					dadOn = true;
 				}
@@ -740,11 +741,12 @@ public class Commands {
 			if (dadOn) {
 				dadJoke = dadJoke.concat(", I'm Jangle.");
 				channel.sendMessage(dadJoke).complete();
-				System.out.println("Dad Joke Checkpoint 3 @" + java.time.LocalDateTime.now());
+				//System.out.println("Dad Joke Checkpoint 3 @" + java.time.LocalDateTime.now());
+				System.out.println("Dad Joke Num: " + dadChance + " Completed @" + java.time.LocalDateTime.now());
 			}
 			// Else, send nothing but tell the console what the number was.
 			else {
-				System.out.println("Dad Joke Num: " + dadChance + " @" + java.time.LocalDateTime.now());
+				//System.out.println("Dad Joke Num: " + dadChance + " @" + java.time.LocalDateTime.now());
 			}
 		}
 		// If the number is not in the range, do nothing
@@ -1070,7 +1072,7 @@ public class Commands {
 		 * therough the elgin national watch database to give important information on
 		 * the aforementioned watch movement.
 		 */
-		if (command.substring(0, 6).equals("serial")) {
+		if (command.length() >= 5 && command.substring(0, 6).equals("serial")) {
 			String to_send_to_channel = "";
 			String[] to_split = content.split(" ");
 			String serial_num = to_split[1];
