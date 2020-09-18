@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -11,6 +12,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Document.OutputSettings;
 import org.jsoup.safety.Whitelist;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.Message.Attachment;
 import net.dv8tion.jda.api.entities.MessageChannel;
@@ -28,7 +30,7 @@ public class Commands {
 	 * throughout the class.
 	 */
 	String content, prefix, command, flip_name, authorSend, peen_file_name, correctArray, printed, dadJoke, s, s1, s2,
-			s3, s4, s5, s51, version;
+			s3, s4, s5, s51, version, timeDate;
 	String[] htCount;
 	double header, tailer;
 	boolean dadOn;
@@ -39,6 +41,7 @@ public class Commands {
 	WriteFile flipData, peen_data;
 	ReadFile flipFile, peen_file;
 	Scanner scan;
+	LocalDateTime localDate;
 
 	/*
 	 * Constructor for the Commands class. It takes in all the data created in
@@ -55,7 +58,12 @@ public class Commands {
 		// Prefix
 		prefix = ">";
 		// Version update
-		version = "3.0.2";
+		version = "3.1.1";
+		//Get local date to be used in timestamps
+		localDate = java.time.LocalDateTime.now();
+		//Create timestamp
+		timeDate = "" + localDate.getMonth().getValue() + "/" + localDate.getDayOfMonth() + "/" + localDate.getYear()
+		+ " @ " + localDate.getHour() + ":" + localDate.getMinute() + ":" + localDate.getSecond();
 		/*
 		 * One problem I ran into was that in using command, as opposed to content to
 		 * simplify things, there sometimes would not be a substring of a given length.
@@ -122,7 +130,8 @@ public class Commands {
 			 */
 			if (content.startsWith(prefix)) {
 				// TODO once again, find a way to handle rather than if/else looping.
-				//TODO use an array containing the keywords and check against input OR command handler
+				// TODO use an array containing the keywords and check against input OR command
+				// handler
 				// TODO organize better/more used commands to the top.
 				// TODO break the statement once a command is executed.
 				Help(command);
@@ -732,7 +741,8 @@ public class Commands {
 						dadJoke = dadJoke.concat(" " + dadArray[y]);
 					}
 					// Console log
-					//System.out.println("Dad Joke Checkpoint 2 @" + java.time.LocalDateTime.now());
+					// System.out.println("Dad Joke Checkpoint 2 @" +
+					// java.time.LocalDateTime.now());
 					// Dad joke did happen
 					dadOn = true;
 				}
@@ -741,12 +751,14 @@ public class Commands {
 			if (dadOn) {
 				dadJoke = dadJoke.concat(", I'm Jangle.");
 				channel.sendMessage(dadJoke).complete();
-				//System.out.println("Dad Joke Checkpoint 3 @" + java.time.LocalDateTime.now());
+				// System.out.println("Dad Joke Checkpoint 3 @" +
+				// java.time.LocalDateTime.now());
 				System.out.println("Dad Joke Num: " + dadChance + " Completed @" + java.time.LocalDateTime.now());
 			}
 			// Else, send nothing but tell the console what the number was.
 			else {
-				//System.out.println("Dad Joke Num: " + dadChance + " @" + java.time.LocalDateTime.now());
+				// System.out.println("Dad Joke Num: " + dadChance + " @" +
+				// java.time.LocalDateTime.now());
 			}
 		}
 		// If the number is not in the range, do nothing
@@ -900,6 +912,11 @@ public class Commands {
 		// Textlog channel creation
 		TextChannel textlog = event.getGuild().getTextChannelById("531953276816719874");
 		/*
+		 * To create a proper textlog, not using the code blocks, and instead using
+		 * colorful embeds, we first need to create an embed using embed builder.
+		 */
+		EmbedBuilder embedMessage = new EmbedBuilder();
+		/*
 		 * What's going on here is that I've created an arrayList of the attachments
 		 * found within a given message. What this will allow me to do is go through
 		 * each attachment and handle it separately
@@ -914,6 +931,14 @@ public class Commands {
 		// Initialize the file we'll be working with
 		File temp_image = null;
 		// If there are attachments, proceed
+
+		// Begin creating embed
+		//Embed title is the author's name
+		embedMessage.setTitle(author.getName());
+		//Embed footer/content is the actual content of the message + timestamp
+		embedMessage.setFooter("\"" + content + "\"" + "\n\n" + "Channel: " + event.getChannel().getName() + "\nTime: "
+				+ timeDate);
+
 		if (image.size() > 0) {
 			// It does contain an image
 			contains_image = true;
@@ -926,7 +951,10 @@ public class Commands {
 				file_name = image_file.getFileName();
 				// Create the temp file
 				temp_image = new File("/home/LeChickenSurAFez/JangleImages/" + file_name);
+				// When done testing, replace with "/home/LeChickenSurAFez/JangleImages/"
 				// Download the file to /home/LeChickenSurAFez/JangleImages/file_name
+				//When testing, use "C:\\JangleImages\\"
+
 				image_file.downloadToFile(temp_image);
 				/*
 				 * The next block of code, the try/catch statement deals with handling the image
@@ -950,7 +978,15 @@ public class Commands {
 				 */
 				if (contains_image) {
 					// If there's an image, send it to the textlog.
-					textlog.sendFile(temp_image).complete();
+					// Set embed color to blue
+					embedMessage.setColor(3447003);
+					//If it's just an image with no text, send only the image.
+					if (content.length() == 0) {
+						embedMessage.setFooter("Channel: " + event.getChannel().getName() + "\nTime: "
+								+ timeDate);
+					}
+					// Send embed to textlog
+					textlog.sendMessage(embedMessage.build()).addFile(temp_image).complete();
 					try {
 						// Then, if it exists, delete the image using its given path
 						Files.deleteIfExists(temp_image.toPath());
@@ -958,21 +994,22 @@ public class Commands {
 						// Print stack trace if exception
 						e.printStackTrace();
 					}
-					// Send identification information to the textlog.
-					textlog.sendMessage("```\n" + "The above image ^" + "\nAuthor: " + author + "\n" + "Channel: "
-							+ event.getChannel() + "\nTime: " + java.time.LocalDateTime.now() + "```").complete();
-					System.out.println("Image sent to textlog @" + java.time.LocalDateTime.now());
+					// Sysout completion
+					System.out.println("Image/File sent to textlog on " + timeDate);
 				}
+
 			}
-		}
-		// If there is accompanying text, or any text in general, enact this statement
-		// This also will always apply if there's content, regardless of whether there
-		// is an image or not.
-		if (content.length() > 0) {
-			// Send identification information to the textlog.
-			textlog.sendMessage("```\n" + "\"" + content + "\"" + "\nAuthor: " + author + "\n" + "Channel: "
-					+ event.getChannel() + "\nTime: " + java.time.LocalDateTime.now() + "```").complete();
-			System.out.println("Message sent to textlog @" + java.time.LocalDateTime.now());
+		} else {
+			// If there is accompanying text, or any text in general, enact this statement
+			if (content.length() > 0) {
+				// Send identification information to the textlog.
+				// Set color of embed to aqua
+				embedMessage.setColor(1752220);
+				// Send embed
+				textlog.sendMessage(embedMessage.build()).complete();
+				// Sysout completion
+				System.out.println("Message sent to textlog on " + timeDate);
+			}
 		}
 
 	}
