@@ -9,8 +9,6 @@ import java.util.Scanner;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Document.OutputSettings;
-import org.jsoup.safety.Whitelist;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
@@ -58,12 +56,12 @@ public class Commands {
 		// Prefix
 		prefix = ">";
 		// Version update
-		version = "3.1.1";
-		//Get local date to be used in timestamps
+		version = "3.1.3";
+		// Get local date to be used in timestamps
 		localDate = java.time.LocalDateTime.now();
-		//Create timestamp
+		// Create timestamp
 		timeDate = "" + localDate.getMonth().getValue() + "/" + localDate.getDayOfMonth() + "/" + localDate.getYear()
-		+ " @ " + localDate.getHour() + ":" + localDate.getMinute() + ":" + localDate.getSecond();
+				+ " @ " + localDate.getHour() + ":" + localDate.getMinute() + ":" + localDate.getSecond();
 		/*
 		 * One problem I ran into was that in using command, as opposed to content to
 		 * simplify things, there sometimes would not be a substring of a given length.
@@ -168,7 +166,7 @@ public class Commands {
 							+ "\n>luckynum\n>factor\n>peen\n>flip\n>random\n>version\n>info\n>rots```")
 					.complete();
 			// Console log
-			System.out.println("Help completed @" + java.time.LocalDateTime.now());
+			System.out.println("Help completed on " + timeDate);
 		}
 	}
 
@@ -190,7 +188,7 @@ public class Commands {
 					+ ">peen ['>peen @name' to give penis length of @name]\n" + ">flip [flips a coin]\n" + ">random\n"
 					+ ">version\n" + ">rots [sends the entire script of Star Wars: Episode III]```").complete();
 			// Console log
-			System.out.println("Info completed @" + java.time.LocalDateTime.now());
+			System.out.println("Info completed on " + timeDate);
 		}
 	}
 
@@ -202,7 +200,7 @@ public class Commands {
 			int random = randomNum.nextInt(100) + 1;
 			channel.sendMessage("Random number: " + random).complete();
 			// Console log
-			System.out.println("Random completed @" + java.time.LocalDateTime.now());
+			System.out.println("Random completed on " + timeDate);
 
 		}
 	}
@@ -217,7 +215,7 @@ public class Commands {
 		// code.
 		if (command.equals("ping")) {
 			channel.sendMessage("Pong! " + event.getJDA().getGatewayPing() + "ms").complete();
-			System.out.println("Pong completed @" + java.time.LocalDateTime.now());
+			System.out.println("Ping of " + event.getJDA().getGatewayPing() + "ms completed on " + timeDate);
 		}
 
 	}
@@ -311,7 +309,7 @@ public class Commands {
 						.complete();
 			}
 			// Console output
-			System.out.println("Flip completed @" + java.time.LocalDateTime.now());
+			System.out.println("Flip completed on " + timeDate);
 
 		}
 
@@ -383,7 +381,7 @@ public class Commands {
 							if (whatWeBaseItOff[x].equals("<@308761110394306560>")
 									&& authorSend.replace("!", "").equals("<@308761110394306560>")) {
 								channel.sendMessage("<@308761110394306560> has a twenty foot long schlong.").complete();
-								System.out.println("Size @" + java.time.LocalDateTime.now());
+								System.out.println("Peen completed on " + timeDate);
 								// Stop the loop by turning x to be a value higher than equal
 								x = whatWeBaseItOff.length;
 								// Switch both loops off
@@ -393,7 +391,7 @@ public class Commands {
 							} else if (whatWeBaseItOff[x].equals("<@180825351109214208>")
 									&& authorSend.replace("!", "").equals("<@180825351109214208>")) {
 								channel.sendMessage("<@180825351109214208> has a ten foot long schlong.").complete();
-								System.out.println("Size @" + java.time.LocalDateTime.now());
+								System.out.println("Peen completed on " + timeDate);
 								// Stop the loop by turning x to be a value higher than equal
 								x = whatWeBaseItOff.length;
 								// Switch both loops off
@@ -410,7 +408,7 @@ public class Commands {
 									channel.sendMessage(whatWeBaseItOff[ab] + "'s penis size is "
 									// Uses the next index for the actual penis size
 											+ whatWeBaseItOff[ab + 1] + " inches.").complete();
-									System.out.println("Size @" + java.time.LocalDateTime.now());
+									System.out.println("Peen completed on " + timeDate);
 									// Cancels loop by making ab bigger than equal
 									ab = whatWeBaseItOff.length;
 									// Switches off loops
@@ -432,7 +430,7 @@ public class Commands {
 						// Write the string to the file.
 						peen_data.writeToFile(printed);
 						// Console output that a new entry was logged.
-						System.out.println("Something written @" + java.time.LocalDateTime.now());
+						System.out.println("New peen size added to log on " + timeDate);
 						/* Following lines encompass updating arrays like we initially did */
 						aryLines = peen_file.OpenFile();
 						for (int y = 0; y < aryLines.length; y++) {
@@ -524,7 +522,7 @@ public class Commands {
 				// Send message to text channel
 				channel.sendMessage("YOU CAN'T DO THAT THAT'S RACIST").complete();
 				// Console log
-				System.out.println("Mrs Obama saved @" + java.time.LocalDateTime.now());
+				System.out.println("Mrs Obama saved on " + timeDate);
 			}
 		}
 
@@ -753,7 +751,7 @@ public class Commands {
 				channel.sendMessage(dadJoke).complete();
 				// System.out.println("Dad Joke Checkpoint 3 @" +
 				// java.time.LocalDateTime.now());
-				System.out.println("Dad Joke Num: " + dadChance + " Completed @" + java.time.LocalDateTime.now());
+				System.out.println("Dad Joke Num: " + dadChance + " completed on " + timeDate);
 			}
 			// Else, send nothing but tell the console what the number was.
 			else {
@@ -773,7 +771,7 @@ public class Commands {
 			// Send message
 			channel.sendMessage("Pongle!").complete();
 			// Console log
-			System.out.println("Pongle completed @" + java.time.LocalDateTime.now());
+			System.out.println("Pongle completed on " + timeDate);
 		}
 	}
 
@@ -786,7 +784,7 @@ public class Commands {
 			// Send messsage
 			channel.sendMessage("It's pizza time ;)").complete();
 			// Console log.
-			System.out.println("Pizza time completed @" + java.time.LocalDateTime.now());
+			System.out.println("Pizzatime completed on " + timeDate);
 		}
 	}
 
@@ -818,7 +816,7 @@ public class Commands {
 			channel.sendMessage(tic7).complete();
 
 			// Console log
-			System.out.println("Tictactoe completed @" + java.time.LocalDateTime.now());
+			System.out.println("TicTacToe completed on " + timeDate);
 
 		}
 	}
@@ -829,7 +827,7 @@ public class Commands {
 			// Send message
 			channel.sendMessage("Jingle Jangle go the keys <@195284766143021057>").complete();
 			// Console log.
-			System.out.println("Jingle Jangle completed @" + java.time.LocalDateTime.now());
+			System.out.println("Jingle Jangle completed on " + timeDate);
 
 		}
 
@@ -893,12 +891,12 @@ public class Commands {
 					}
 				}
 				// Console log
-				System.out.println("Beemovie completed @" + java.time.LocalDateTime.now());
+				System.out.println("Beemovie completed on " + timeDate);
 			}
 			// If the random num generator didn't hit a 1 or two, output that it didn't
 			// occur.
 			else {
-				System.out.println("Beemovie NOT completed @" + java.time.LocalDateTime.now());
+				System.out.println("Beemovie NOT completed on " + timeDate);
 			}
 		}
 	}
@@ -910,7 +908,12 @@ public class Commands {
 		 */
 
 		// Textlog channel creation
-		TextChannel textlog = event.getGuild().getTextChannelById("531953276816719874");
+		// Create ArrayList of textchannels
+		ArrayList<TextChannel> list_of_channels = new ArrayList<TextChannel>();
+		// Search all textchannels for one named textlog
+		list_of_channels = (ArrayList<TextChannel>) event.getGuild().getTextChannelsByName("textlog", true);
+		// Assign textlog channel to the only one named textlog.
+		TextChannel textlog = list_of_channels.get(0);
 		/*
 		 * To create a proper textlog, not using the code blocks, and instead using
 		 * colorful embeds, we first need to create an embed using embed builder.
@@ -933,11 +936,11 @@ public class Commands {
 		// If there are attachments, proceed
 
 		// Begin creating embed
-		//Embed title is the author's name
+		// Embed title is the author's name
 		embedMessage.setTitle(author.getName());
-		//Embed footer/content is the actual content of the message + timestamp
-		embedMessage.setFooter("\"" + content + "\"" + "\n\n" + "Channel: " + event.getChannel().getName() + "\nTime: "
-				+ timeDate);
+		// Embed footer/content is the actual content of the message + timestamp
+		embedMessage.setFooter(
+				"\"" + content + "\"" + "\n\n" + "Channel: " + event.getChannel().getName() + "\nTime: " + timeDate);
 
 		if (image.size() > 0) {
 			// It does contain an image
@@ -953,7 +956,7 @@ public class Commands {
 				temp_image = new File("/home/LeChickenSurAFez/JangleImages/" + file_name);
 				// When done testing, replace with "/home/LeChickenSurAFez/JangleImages/"
 				// Download the file to /home/LeChickenSurAFez/JangleImages/file_name
-				//When testing, use "C:\\JangleImages\\"
+				// When testing, use "C:\\JangleImages\\"
 
 				image_file.downloadToFile(temp_image);
 				/*
@@ -964,10 +967,10 @@ public class Commands {
 					/*
 					 * Very important. A problem that I ran into was that Jangle would try to send
 					 * the image before it's even been downloaded, so to mitigate that I set the
-					 * thread to sleep for 1000ms, or 1 second to allow the image time to download,
+					 * thread to sleep for 2000ms, or 2 seconds to allow the image time to download,
 					 * thus negating the problems that were occuring.
 					 */
-					Thread.sleep(1000);
+					Thread.sleep(2000);
 				} catch (InterruptedException e) {
 					// Print stack trace if exception
 					e.printStackTrace();
@@ -980,10 +983,9 @@ public class Commands {
 					// If there's an image, send it to the textlog.
 					// Set embed color to blue
 					embedMessage.setColor(3447003);
-					//If it's just an image with no text, send only the image.
+					// If it's just an image with no text, send only the image.
 					if (content.length() == 0) {
-						embedMessage.setFooter("Channel: " + event.getChannel().getName() + "\nTime: "
-								+ timeDate);
+						embedMessage.setFooter("Channel: " + event.getChannel().getName() + "\nTime: " + timeDate);
 					}
 					// Send embed to textlog
 					textlog.sendMessage(embedMessage.build()).addFile(temp_image).complete();
@@ -1021,7 +1023,7 @@ public class Commands {
 		 */
 		if (command.equals("version")) {
 			// Console log
-			System.out.println("Jangle version " + version + " @ " + java.time.LocalDateTime.now());
+			System.out.println("Jangle version " + version + " completed on " + timeDate);
 			// Send message
 			channel.sendMessage("Jangle version " + version + ": Chris Cardimen").complete();
 		}
@@ -1094,11 +1096,11 @@ public class Commands {
 					}
 				}
 				// Console log
-				System.out.println("RoTS completed @" + java.time.LocalDateTime.now());
+				System.out.println("RoTS completed on " + timeDate);
 			}
 			// Console log
 			else {
-				System.out.println("RoTS NOT completed @" + java.time.LocalDateTime.now());
+				System.out.println("RoTS NOT completed on " + timeDate);
 			}
 		}
 	}
@@ -1177,7 +1179,7 @@ public class Commands {
 			channel.sendMessage(to_send_to_channel).complete();
 
 			// Console log
-			System.out.println("Serial# completed @" + java.time.LocalDateTime.now());
+			System.out.println("Serial# completed on " + timeDate);
 
 		}
 	}

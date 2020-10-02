@@ -6,7 +6,7 @@ import net.dv8tion.jda.api.entities.Activity;
 /*
  * 
  * Project name: Jangle
- * Update date: 4/30/20
+ * Update date: 9/23/20
  * Author: Chris Cardimen
  * Overview: Jangle is a discord bot with both text and music capabilities.
  * He is sourced from multiple libraries including lavaplayer, jSoup, and more.
