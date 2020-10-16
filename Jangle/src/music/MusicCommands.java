@@ -1,5 +1,7 @@
 package music;
 
+import java.util.ArrayList;
+
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 
 import net.dv8tion.jda.api.audio.hooks.ConnectionStatus;
@@ -10,6 +12,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.managers.AudioManager;
+import utility.UtilityFunctions;
 
 public class MusicCommands {
 	/*
@@ -26,9 +29,10 @@ public class MusicCommands {
 	AudioManager audioManager;
 	ConnectionStatus status;
 	PlayerManager manager;
-	TextChannel jangle_channel;
+	public static TextChannel jangle_channel;
 	AudioPlayer DJ;
 	TrackScheduler queue;
+	public static ArrayList<String> song_queue = new ArrayList<String>();
 
 	/*
 	 * Constructor for the MusicCommands class. It takes in all the data created in
@@ -86,7 +90,7 @@ public class MusicCommands {
 		 * occur. So I put in this statement to actively check and see if there IS
 		 * content to check.
 		 */
-		if (content.length() > 0) {
+	if (content.length() > 0) {
 			/*
 			 * The functions in the following if statement are all COMMANDS that must be
 			 * invoked using the prefix.
@@ -99,6 +103,7 @@ public class MusicCommands {
 				Stop(command);
 				Volume(command);
 				Skip(command);
+				Queue(command);
 			}
 		}
 	}
@@ -162,11 +167,13 @@ public class MusicCommands {
 				channel.sendMessage("Resuming track.").complete();
 			}
 			// If the command is longer than 4, utilize the full capability.
-			else {
+			// If the DJ is not playing a song, follow code
+			else if (song_queue.isEmpty()) {
 				// Splits content into 2 pieces: command and link
 				String[] split_into_two = content.split(" ");
 				// URL is assigned to the latter half
 				String URL = split_into_two[1];
+				UtilityFunctions.Queue(URL);
 				// If the user is in a voice channel
 				if (user_vc != null) {
 					// Open an audio connection in the user's voice channel
@@ -180,6 +187,15 @@ public class MusicCommands {
 				else {
 					channel.sendMessage("Please join a voice channel.").complete();
 				}
+
+			}
+			// If the DJ is currently NOT playing a song, queue it
+			else {
+				// Splits content into 2 pieces: command and link
+				String[] split_into_two = content.split(" ");
+				// URL is assigned to the latter half
+				String URL = split_into_two[1];
+				song_queue.add(URL);
 			}
 		}
 	}
@@ -246,14 +262,39 @@ public class MusicCommands {
 		 */
 		if (command.equals("skip")) {
 			// Skips to the next track
+
+			if (MusicCommands.song_queue.isEmpty()) {
+				channel.sendMessage("Nothing is playing").complete();
+			} else {
+				MusicCommands.song_queue.remove(0);
+				if (MusicCommands.song_queue.isEmpty()) {
+					Leave("leave");
+					DJ.destroy();
+					channel.sendMessage("The queue is now empty.").complete();
+				} else {
+					PlayerManager.loadAndPlay(MusicCommands.jangle_channel, MusicCommands.song_queue.get(0));
+
+				}
+				// nextTrack();
+			}
 			queue.nextTrack();
 		}
 	}
 
-	// TODO: Make queue
 	public void Queue(String command) {
 		/* Command description: Shows the queue. */
 		if (command.equals("queue") || command.equals("q")) {
+			String queue_to_output = "";
+			for (String x : song_queue) {
+				queue_to_output += (song_queue.indexOf(x) + 1) + ": <" + x + ">" + "\n";
+			}
+			if (queue_to_output.isEmpty()) {
+				channel.sendMessage("The queue is empty.").complete();
+
+			} else {
+				channel.sendMessage(queue_to_output).complete();
+
+			}
 		}
 	}
 }

@@ -21,7 +21,7 @@ public class Main {
 	@SuppressWarnings("deprecation")
 	public static void main(String[] args) throws Exception {
 		/*Creating a new JDA object with the token*/
-		 JDA jda = new JDABuilder("NTMxNTMyODIxMTQ0MTQxODM1.XhDK-w.bWXP8INrPcWyuiLzE9GYs_DSUL8")
+		 JDA jda = new JDABuilder("NTMxNTMyODIxMTQ0MTQxODM1.XDJCgw.oye8D4Cevbz-YdE6jkrRzlekOPQ")
 				 //Adding event listener
 		            .addEventListeners(new myEventListener())
 		            //Sets the activity

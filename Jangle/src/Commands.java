@@ -56,7 +56,7 @@ public class Commands {
 		// Prefix
 		prefix = ">";
 		// Version update
-		version = "3.1.3";
+		version = "3.3.0";
 		// Get local date to be used in timestamps
 		localDate = java.time.LocalDateTime.now();
 		// Create timestamp
@@ -1111,7 +1111,7 @@ public class Commands {
 		 * therough the elgin national watch database to give important information on
 		 * the aforementioned watch movement.
 		 */
-		if (command.length() >= 5 && command.substring(0, 6).equals("serial")) {
+		if (command.length() >= 6 && command.substring(0, 6).equals("serial")) {
 			String to_send_to_channel = "";
 			String[] to_split = content.split(" ");
 			String serial_num = to_split[1];
