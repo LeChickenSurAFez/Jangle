@@ -56,7 +56,7 @@ public class Commands {
 		// Prefix
 		prefix = ">";
 		// Version update
-		version = "3.3.3";
+		version = "3.3.6";
 		// Get local date to be used in timestamps
 		localDate = java.time.LocalDateTime.now();
 		// Create timestamp
