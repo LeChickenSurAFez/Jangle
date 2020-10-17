@@ -56,7 +56,7 @@ public class TrackScheduler extends AudioEventAdapter {
 		// LOAD_FAILED)
 		if (endReason.mayStartNext) {
 			MusicCommands.song_queue.remove(0);
-			if (MusicCommands.song_queue.get(0).isEmpty()) {
+			if (MusicCommands.song_queue.isEmpty()) {
 
 			} else {
 				PlayerManager.loadAndPlay(MusicCommands.jangle_channel, MusicCommands.song_queue.get(0));

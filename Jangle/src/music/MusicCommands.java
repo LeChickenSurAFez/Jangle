@@ -90,7 +90,7 @@ public class MusicCommands {
 		 * occur. So I put in this statement to actively check and see if there IS
 		 * content to check.
 		 */
-	if (content.length() > 0) {
+		if (content.length() > 0) {
 			/*
 			 * The functions in the following if statement are all COMMANDS that must be
 			 * invoked using the prefix.
@@ -179,7 +179,7 @@ public class MusicCommands {
 					// Open an audio connection in the user's voice channel
 					audioManager.openAudioConnection(user_vc);
 					// Load and play the URL
-					manager.loadAndPlay(jangle_channel, URL);
+					PlayerManager.loadAndPlay(jangle_channel, URL);
 					// Initialize volume at 45.
 					DJ.setVolume(45);
 				}
