@@ -55,10 +55,15 @@ public class TrackScheduler extends AudioEventAdapter {
 		// Only start the next track if the end reason is suitable for it (FINISHED or
 		// LOAD_FAILED)
 		if (endReason.mayStartNext) {
+			// If the current track is over, remove it from the queue
 			MusicCommands.song_queue.remove(0);
+			// If the queue is now empty
 			if (MusicCommands.song_queue.isEmpty()) {
 
-			} else {
+			}
+			// Else if the queue is no longer empty
+			else {
+				// Load the next track
 				PlayerManager.loadAndPlay(MusicCommands.jangle_channel, MusicCommands.song_queue.get(0));
 				// nextTrack();
 			}
