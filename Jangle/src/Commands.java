@@ -38,7 +38,7 @@ public class Commands {
 	MessageReceivedEvent event;
 	WriteFile flipData, peen_data;
 	ReadFile flipFile, peen_file;
-	Scanner scan;
+Scanner scan;
 	LocalDateTime localDate;
 
 	/*
@@ -904,7 +904,7 @@ public class Commands {
 	public void Textlog() {
 		/*
 		 * Command description: Logs text, images, and attatchments to the textlog
-		 * channel. Used for safety and logging/archival purposes.
+	 * channel. Used for safety and logging/archival purposes.
 		 */
 
 		// Textlog channel creation

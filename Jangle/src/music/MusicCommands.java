@@ -1,7 +1,17 @@
 package music;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import com.google.api.services.youtube.YouTube;
+import com.google.api.services.youtube.YouTube.Search;
+import com.google.api.services.youtube.model.SearchListResponse;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 
 import net.dv8tion.jda.api.audio.hooks.ConnectionStatus;
@@ -13,6 +23,11 @@ import net.dv8tion.jda.api.entities.VoiceChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.managers.AudioManager;
 import utility.UtilityFunctions;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 public class MusicCommands {
 	/*
@@ -147,7 +162,6 @@ public class MusicCommands {
 			else {
 				channel.sendMessage("Not currently in a voice channel.").complete();
 			}
-
 		}
 	}
 
@@ -169,10 +183,37 @@ public class MusicCommands {
 			// If the command is longer than 4, utilize the full capability.
 			// If the DJ is not playing a song, follow code
 			else if (song_queue.isEmpty()) {
+				// Safe code
 				// Splits content into 2 pieces: command and link
 				String[] split_into_two = content.split(" ");
 				// URL is assigned to the latter half
 				String URL = split_into_two[1];
+				// New code
+
+				// Initialize document
+				String[] searchWords = content.split(" ");
+
+				for (int index = 1; index < searchWords.length; ++index) {
+					if (index == 1) {
+					} else {
+
+					}
+				}
+				try {
+					YouTube youtubeService = UtilityFunctions.getService();
+					// Define and execute the API request
+					YouTube.Search.List request = youtubeService.search().list("items");
+					SearchListResponse response = request.setMaxResults(25L).setQ("surfing").setType("video").execute();
+					String x = response.get("videoId").toString();
+					System.out.println(x);
+				} catch (IOException e) {
+
+				} catch (GeneralSecurityException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				// Safe code
 				UtilityFunctions.Queue(URL);
 				// If the user is in a voice channel
 				if (user_vc != null) {
@@ -187,7 +228,6 @@ public class MusicCommands {
 				else {
 					channel.sendMessage("Please join a voice channel.").complete();
 				}
-
 			}
 			// If the DJ is currently NOT playing a song, queue it
 			else {
@@ -224,7 +264,6 @@ public class MusicCommands {
 	public void Volume(String command) {
 		/* Command description: Sets the volume of the DJ */
 		if (command.length() >= 6 && command.substring(0, 6).equals("volume")) {
-
 			// Splits the content into 2 pieces: the command and the volume
 			String[] split_into_volume = command.split(" ");
 			// Parses an int from the volume portion of the command
@@ -263,17 +302,27 @@ public class MusicCommands {
 		if (command.equals("skip")) {
 			// Skips to the next track
 
+			// If the song queue is empty:
 			if (MusicCommands.song_queue.isEmpty()) {
+				// Send a message that nothing is playing
 				channel.sendMessage("Nothing is playing").complete();
-			} else {
+			}
+			// Else
+			else {
+				// Remove the first song in the queue
 				MusicCommands.song_queue.remove(0);
+				// If the queue is NOW empty
 				if (MusicCommands.song_queue.isEmpty()) {
+					// Leave & destroy the DJ
 					Leave("leave");
 					DJ.destroy();
+					// Send a message that the queue is now empty
 					channel.sendMessage("The queue is now empty.").complete();
-				} else {
+				}
+				// Else, if the queue still has songs
+				else {
+					// Load and play the next song
 					PlayerManager.loadAndPlay(MusicCommands.jangle_channel, MusicCommands.song_queue.get(0));
-
 				}
 				// nextTrack();
 			}
@@ -284,16 +333,25 @@ public class MusicCommands {
 	public void Queue(String command) {
 		/* Command description: Shows the queue. */
 		if (command.equals("queue") || command.equals("q")) {
+			// Create queue string
 			String queue_to_output = "";
-			for (String x : song_queue) {
-				queue_to_output += (song_queue.indexOf(x) + 1) + ": <" + x + ">" + "\n";
-			}
+			// For each string in the queue list:
+
+			// If the queue is empty
 			if (queue_to_output.isEmpty()) {
+				// Say that the queue is empty
 				channel.sendMessage("The queue is empty.").complete();
-
-			} else {
+			}
+			// Else if the queue is NOT empty
+			else {
+				// Go through each video in the song queue
+				for (String x : song_queue) {
+					// Add it to the queue, alongside an index indicatior and "<>" to make sure that
+					// it doesn't show the video link, rather just prints out the linl
+					queue_to_output += (song_queue.indexOf(x) + 1) + ": <" + x + ">" + "\n";
+				}
+				// Send the queue
 				channel.sendMessage(queue_to_output).complete();
-
 			}
 		}
 	}
